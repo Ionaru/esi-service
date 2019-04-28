@@ -4,3 +4,29 @@ node_js:
     - '11' # EOL: June 2019
     - '10' # EOL: April 2021
     - '8' # EOL: December 2019
+
+jobs:
+    include:
+        - stage: deploy
+          node_js: "lts/*"
+          script: skip
+          before_deploy: if [ "$TRAVIS_BRANCH" = master ] && [ "$TRAVIS_PULL_REQUEST" = false ]; then npm version prerelease --no-git-tag-version --preid "$TRAVIS_BUILD_NUMBER"; fi
+          deploy:
+              - provider: npm
+                email: info@saturnserver.org
+                api_key:
+                    secure: ObBBaBpveAhvlfdL09Sc145/pxJ+HHYsM1UZTo5ZiQHP0nQaRTtWxPInl+h9mXKccX400fbAUF4rZVH9vJb45dPvprBz34Lk5z8Wm4e+ZyP+/oiRDoftb2vMZuDeQPALdOxUMwhBQiJMP0XxVBAcRnsz5ee2QHZdMU7XSEB6gf6RAbvCMiYh7ZcxHT/dOUZnluldjFO/3tvcTNcUe4A7YAOTTBT7Db2L49WUrY9uQ+p2BblqXafWqfHpGIGrZ3guJFzSs5D/TyenH52xZIeHoD8R61dcsUCsQ3ihQAzoqAPDsibjKRiCntjHN8meEivkecVrXBmybutfICy7uD1e3ilbybooxQRaVJeh/o4zoewEZ+q2fAxtzDTO+bGCFeLrbtyqAqwcE13TFrcAAiJrrh0pvfyO8V+8aCYXCrCK65iJjf73OhYpK92zWS/v3XnlUkcgwm29KNiNi49z43MTVIiFh2GhTjWL2wXUd9xk0RQH2GHLmc5d40u/14HvJMun3ytGwmBlxpzzr7wB9VC4fGPfGKVeMnPae7y48ODMYa1lmiIbiuUhwf3BW01/b+qB1544vqwCH3prDQxoCnJSVEy9pTK1g3eiUecXZg6UM5LJ3c0YgULln5rabScmm7/FqoY3O4mMvFoaTSRjTDb3iTNbvQnbKoGkztyno30bRjg=
+                tag: next
+                skip_cleanup: true
+                on:
+                    branch: master
+                    repo: Ionaru/esi-service
+              - provider: npm
+                email: info@saturnserver.org
+                api_key:
+                    secure: ObBBaBpveAhvlfdL09Sc145/pxJ+HHYsM1UZTo5ZiQHP0nQaRTtWxPInl+h9mXKccX400fbAUF4rZVH9vJb45dPvprBz34Lk5z8Wm4e+ZyP+/oiRDoftb2vMZuDeQPALdOxUMwhBQiJMP0XxVBAcRnsz5ee2QHZdMU7XSEB6gf6RAbvCMiYh7ZcxHT/dOUZnluldjFO/3tvcTNcUe4A7YAOTTBT7Db2L49WUrY9uQ+p2BblqXafWqfHpGIGrZ3guJFzSs5D/TyenH52xZIeHoD8R61dcsUCsQ3ihQAzoqAPDsibjKRiCntjHN8meEivkecVrXBmybutfICy7uD1e3ilbybooxQRaVJeh/o4zoewEZ+q2fAxtzDTO+bGCFeLrbtyqAqwcE13TFrcAAiJrrh0pvfyO8V+8aCYXCrCK65iJjf73OhYpK92zWS/v3XnlUkcgwm29KNiNi49z43MTVIiFh2GhTjWL2wXUd9xk0RQH2GHLmc5d40u/14HvJMun3ytGwmBlxpzzr7wB9VC4fGPfGKVeMnPae7y48ODMYa1lmiIbiuUhwf3BW01/b+qB1544vqwCH3prDQxoCnJSVEy9pTK1g3eiUecXZg6UM5LJ3c0YgULln5rabScmm7/FqoY3O4mMvFoaTSRjTDb3iTNbvQnbKoGkztyno30bRjg=
+                skip_cleanup: true
+                on:
+                    branch: master
+                    repo: Ionaru/esi-service
+                    tags: true
