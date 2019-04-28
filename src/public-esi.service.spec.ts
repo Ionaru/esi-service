@@ -92,8 +92,7 @@ describe('PublicESIService tests', () => {
 
     test('new PublicESIService default CacheController', async () => {
 
-        // @ts-ignore
-        new PublicESIService({axiosInstance: mockAxios});
+        new PublicESIService({axiosInstance: mockAxios as any});
 
         expect(warningSpy).toHaveBeenCalledWith('No CacheController instance given to PublicESIService, requests will not be cached!');
     });
@@ -108,8 +107,7 @@ describe('PublicESIService tests', () => {
             statusText: 'OK',
         }));
 
-        // @ts-ignore
-        const esi = new PublicESIService({axiosInstance: mockAxios});
+        const esi = new PublicESIService({axiosInstance: mockAxios as any});
 
         const result = await esi.fetchESIData<ITypeData>(url);
         expect(mockAxios.get).toHaveBeenCalledTimes(1);
@@ -132,8 +130,10 @@ describe('PublicESIService tests', () => {
 
         const cache = new CacheController();
 
-        // @ts-ignore
-        const esi = new PublicESIService({axiosInstance: mockAxios, cacheController: cache});
+        const esi = new PublicESIService({
+            axiosInstance: mockAxios as any,
+            cacheController: cache,
+        });
 
         const result = await esi.fetchESIData<ITypeData>(url);
         expect(mockAxios.get).toHaveBeenCalledTimes(1);
@@ -164,8 +164,10 @@ describe('PublicESIService tests', () => {
 
         const cache = new CacheController();
 
-        // @ts-ignore
-        const esi = new PublicESIService({axiosInstance: mockAxios, cacheController: cache});
+        const esi = new PublicESIService({
+            axiosInstance: mockAxios as any,
+            cacheController: cache,
+        });
 
         const result = await esi.fetchESIData<ITypeData>(url);
         expect(mockAxios.get).toHaveBeenCalledTimes(1);
@@ -203,8 +205,7 @@ describe('PublicESIService tests', () => {
             statusText: 'Internal Server Error',
         }));
 
-        // @ts-ignore
-        const esi = new PublicESIService({axiosInstance: mockAxios});
+        const esi = new PublicESIService({axiosInstance: mockAxios as any});
 
         await expect(esi.fetchESIData<ITypeData>(url)).rejects.toThrow('HTTP Error');
     });
@@ -213,8 +214,7 @@ describe('PublicESIService tests', () => {
 
         mockAxios.get.mockImplementationOnce(() => Promise.resolve());
 
-        // @ts-ignore
-        const esi = new PublicESIService({axiosInstance: mockAxios});
+        const esi = new PublicESIService({axiosInstance: mockAxios as any});
 
         const result = await esi.fetchESIData<ITypeData>(url);
         expect(mockAxios.get).toHaveBeenCalledTimes(1);
@@ -234,8 +234,7 @@ describe('PublicESIService tests', () => {
             statusText: 'OK',
         }));
 
-        // @ts-ignore
-        const esi = new PublicESIService({axiosInstance: mockAxios});
+        const esi = new PublicESIService({axiosInstance: mockAxios as any});
 
         const result = await esi.fetchESIData<ITypeData>(url);
         expect(mockAxios.get).toHaveBeenCalledTimes(1);
@@ -259,8 +258,7 @@ describe('PublicESIService tests', () => {
         }));
 
         const esi = new PublicESIService({
-            // @ts-ignore
-            axiosInstance: mockAxios,
+            axiosInstance: mockAxios as any,
             onRouteWarning: (route, text) => {
                 throw new Error(`Route warning: ${route}, ${text}`);
             },
@@ -279,8 +277,7 @@ describe('PublicESIService tests', () => {
             statusText: 'OK',
         }));
 
-        // @ts-ignore
-        const esi = new PublicESIService({axiosInstance: mockAxios});
+        const esi = new PublicESIService({axiosInstance: mockAxios as any});
         await esi.fetchESIData<ITypeData>(url);
 
         const validateStatusFunction = mockAxios.get.mock.calls[0][1].validateStatus;
