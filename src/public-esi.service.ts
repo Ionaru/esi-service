@@ -35,8 +35,7 @@ export class PublicESIService {
 
         this.cacheController = cacheController;
         if (!this.cacheController) {
-            const esiClassName = this.constructor.name;
-            process.emitWarning(`No CacheController instance given to ${esiClassName}, requests will not be cached!`);
+            process.emitWarning(`No CacheController instance given to ${this.constructor.name}, requests will not be cached!`);
         }
     }
 
