@@ -2,7 +2,7 @@
 
 import * as fs from 'fs';
 
-import { CacheController } from './cache.controller';
+import { CacheController } from './';
 
 jest.mock('fs');
 
