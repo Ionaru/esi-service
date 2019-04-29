@@ -23,7 +23,7 @@ export class PublicESIService {
 
     private readonly axiosInstance: AxiosInstance;
     private readonly cacheController?: CacheController;
-    private readonly onRouteWarning?: (route: string, text?: string) => void;
+    private readonly onRouteWarning?: (route: string, text: string) => void;
 
     private readonly deprecationsLogged: string[] = [];
 
@@ -79,7 +79,7 @@ export class PublicESIService {
         return;
     }
 
-    public logWarning(route: string, text?: string) {
+    public logWarning(route: string, text: string) {
         if (!this.deprecationsLogged.includes(route)) {
 
             if (this.onRouteWarning) {
