@@ -12,7 +12,7 @@ interface IConstructorParameters {
 
 export class PublicESIService {
 
-    private static readonly debug = Debug('eve-utils:BaseESIService');
+    private static readonly debug = Debug('esi-service:PublicESIService');
 
     private static readonly acceptedStatusCodes = [
         httpStatus.OK,

@@ -17,7 +17,7 @@ export class CacheController {
 
     public static isExpired = (cache?: ICacheObject) => cache && cache.expiry ? cache.expiry < Date.now() : true;
 
-    private static readonly debug = Debug('eve-utils:CacheController');
+    private static readonly debug = Debug('esi-service:CacheController');
 
     public readonly responseCache: IResponseCache = {};
 
