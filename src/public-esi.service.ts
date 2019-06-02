@@ -39,7 +39,7 @@ export class PublicESIService {
         }
     }
 
-    public async fetchESIData<T>(url: string): Promise<T | undefined> {
+    public async fetchESIData<T>(url: string) {
 
         // Return cached data if it exists and is still valid.
         if (this.cacheController && !CacheController.isExpired(this.cacheController.responseCache[url])) {
@@ -54,29 +54,24 @@ export class PublicESIService {
         // Set the etag header if a cached response exists.
         if (this.cacheController && this.cacheController.responseCache[url] && this.cacheController.responseCache[url]!.etag) {
             requestConfig.headers = {
-                'If-None-Match': `${this.cacheController.responseCache[url]!.etag}`,
+                'If-None-Match': this.cacheController.responseCache[url]!.etag,
             };
         }
 
-        const response = await this.axiosInstance.get<T | undefined>(url, requestConfig);
+        const response = await this.axiosInstance.get<T>(url, requestConfig);
 
-        if (response) {
-            const statusMessage = `${response.status} ${response.statusText}`;
-            PublicESIService.debug(`${url} => ${statusMessage}`);
+        PublicESIService.debug(`${url} => ${response.status} ${response.statusText}`);
 
-            if (response.headers.warning) {
-                this.logWarning(url, response.headers.warning);
-            }
-
-            if (this.cacheController) {
-                this.cacheController.saveToCache(response);
-                return this.cacheController.responseCache[url]!.data as T;
-            }
-
-            return response.data as T;
+        if (response.headers.warning) {
+            this.logWarning(url, response.headers.warning);
         }
 
-        return;
+        if (this.cacheController) {
+            this.cacheController.saveToCache(response);
+            return this.cacheController.responseCache[url]!.data as T;
+        }
+
+        return response.data;
     }
 
     public logWarning(route: string, text: string) {

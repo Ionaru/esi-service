@@ -209,18 +209,6 @@ describe('PublicESIService tests', () => {
         await expect(esi.fetchESIData<ITypeData>(url)).rejects.toThrow('HTTP Error');
     });
 
-    test('fetchESIData no response', async () => {
-
-        mockAxios.get.mockImplementationOnce(() => Promise.resolve());
-
-        const esi = new PublicESIService({axiosInstance: mockAxios as any});
-
-        const result = await esi.fetchESIData<ITypeData>(url);
-        expect(mockAxios.get).toHaveBeenCalledTimes(1);
-        expect(mockAxios.get).toHaveBeenCalledWith(url, expect.anything());
-        expect(result).toBeUndefined();
-    });
-
     test('fetchESIData warning', async () => {
 
         mockAxios.get.mockImplementationOnce(async () => axiosGetMock({
