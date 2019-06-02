@@ -199,7 +199,7 @@ describe('CacheController tests', () => {
         expect(cache.responseCache['https://some.url/']).toBeTruthy();
         expect(cache.responseCache['https://some.url/']!.data).toEqual('some data');
         expect(cache.responseCache['https://some.url/']!.etag).toEqual('12645');
-        expect(cache.responseCache['https://some.url/']!.expiry).toBeTruthy();
+        expect(cache.responseCache['https://some.url/']!.expiry).toBeUndefined();
     });
 
     test('saveToCache with etag and expiry', () => {

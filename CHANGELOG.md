@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### BREAKING CHANGES
 - Fixed typings for IResponseCache to reflect actual behaviour: not every index returns an ICacheObject.
 
+### Changed
+- Responses are now always saved in the response cache, even without cache headers.
+
 ## [2.0.0] 2019-05-31
 ### BREAKING CHANGES
 - Module will not work with Axios <= 0.18.0

@@ -15,7 +15,7 @@ interface ICacheObject {
 
 export class CacheController {
 
-    public static isExpired = (cache?: ICacheObject) => cache && cache.expiry ? cache.expiry < Date.now() : true;
+    public static isExpired = (cache?: ICacheObject) => (cache && cache.expiry) ? cache.expiry < Date.now() : true;
 
     private static readonly debug = Debug('esi-service:CacheController');
 
@@ -65,23 +65,26 @@ export class CacheController {
 
         if (response.status === httpStatus.OK) {
 
-            if (response.headers.expires || response.headers.etag) {
-                this.responseCache[url] = {
-                    data: response.data,
-                };
+            this.responseCache[url] = {
+                data: response.data,
+            };
 
-                if (response.headers.etag) {
-                    this.responseCache[url]!.etag = response.headers.etag;
-                }
-
-                this.responseCache[url]!.expiry =
-                    response.headers.expires ? new Date(response.headers.expires).getTime() : (Date.now() + 300000);
+            if (response.headers.expires) {
+                this.responseCache[url]!.expiry = new Date(response.headers.expires).getTime();
             }
 
-        } else if (response.status === httpStatus.NOT_MODIFIED) {
+            if (response.headers.etag) {
+                this.responseCache[url]!.etag = response.headers.etag;
+            }
 
-            this.responseCache[url]!.expiry =
-                response.headers.expires ? new Date(response.headers.expires).getTime() : (Date.now() + 300000);
+            // Save response to cache but set to immediately expire.
+            if (!response.headers.expires && !response.headers.etag) {
+                this.responseCache[url]!.expiry = Date.now();
+            }
+
+        // Since response is NOT MODIFIED, the response should already be in the cache, just update the expiry if needed.
+        } else if (response.status === httpStatus.NOT_MODIFIED && response.headers.expires) {
+            this.responseCache[url]!.expiry = new Date(response.headers.expires).getTime();
         }
     }
 }
