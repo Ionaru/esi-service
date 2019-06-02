@@ -24,8 +24,8 @@ describe('PublicESIService tests', () => {
     });
 
     afterEach(() => {
-        warningSpy.mockClear();
-        mockAxios.get.mockClear();
+        warningSpy.mockReset();
+        mockAxios.get.mockReset();
     });
 
     function axiosCreateMock() {
@@ -227,7 +227,7 @@ describe('PublicESIService tests', () => {
             config: {url},
             data: expectedResult,
             headers: {
-                warning: 'You have been warned!',
+                warning: 'Oh no! A warning!',
             },
             status: 200,
             statusText: 'OK',
@@ -241,7 +241,77 @@ describe('PublicESIService tests', () => {
         expect(result).toBeTruthy();
         expect(result!.name).toEqual('Tritanium');
 
+        expect(warningSpy).toHaveBeenCalledWith(`HTTP request warning. ${url}: Oh no! A warning!`);
+    });
+
+    test('fetchESIData double warning same URL', async () => {
+
+        const esi = new PublicESIService({axiosInstance: mockAxios as any, cacheController: new CacheController()});
+
+        mockAxios.get.mockImplementationOnce(async () => axiosGetMock({
+            config: {url},
+            data: expectedResult,
+            headers: {
+                warning: 'You have been warned!',
+            },
+            status: 200,
+            statusText: 'OK',
+        }));
+        await esi.fetchESIData<ITypeData>(url);
+
+        expect(warningSpy).toHaveBeenCalledTimes(1);
         expect(warningSpy).toHaveBeenCalledWith(`HTTP request warning. ${url}: You have been warned!`);
+
+        // Do second request to same url.
+        mockAxios.get.mockImplementationOnce(async () => axiosGetMock({
+            config: {url},
+            data: expectedResult,
+            headers: {
+                warning: 'You have been warned!',
+            },
+            status: 200,
+            statusText: 'OK',
+        }));
+        await esi.fetchESIData<ITypeData>(url);
+
+        // emitWarning should not have been called a second time.
+        expect(warningSpy).toHaveBeenCalledTimes(1);
+    });
+
+    test('fetchESIData double warning different URL', async () => {
+
+        const esi = new PublicESIService({axiosInstance: mockAxios as any, cacheController: new CacheController()});
+
+        mockAxios.get.mockImplementationOnce(async () => axiosGetMock({
+            config: {url},
+            data: expectedResult,
+            headers: {
+                warning: 'The first warning!',
+            },
+            status: 200,
+            statusText: 'OK',
+        }));
+        await esi.fetchESIData<ITypeData>(url);
+
+        expect(warningSpy).toHaveBeenCalledTimes(1);
+        expect(warningSpy).toHaveBeenCalledWith(`HTTP request warning. ${url}: The first warning!`);
+
+        // Do second request to a different url.
+        const url2 = 'https://esi.url/v0/universe/types/35';
+        mockAxios.get.mockImplementationOnce(async () => axiosGetMock({
+            config: {url: url2},
+            data: expectedResult,
+            headers: {
+                warning: 'The second warning!',
+            },
+            status: 200,
+            statusText: 'OK',
+        }));
+        await esi.fetchESIData<ITypeData>(url2);
+
+        // emitWarning should have been called a second time for the different url.
+        expect(warningSpy).toHaveBeenCalledTimes(2);
+        expect(warningSpy).toHaveBeenCalledWith(`HTTP request warning. ${url2}: The second warning!`);
     });
 
     test('fetchESIData custom onRouteWarning', async () => {
