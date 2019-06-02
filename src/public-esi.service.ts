@@ -43,7 +43,7 @@ export class PublicESIService {
 
         // Return cached data if it exists and is still valid.
         if (this.cacheController && !CacheController.isExpired(this.cacheController.responseCache[url])) {
-            return this.cacheController.responseCache[url].data as T;
+            return this.cacheController.responseCache[url]!.data as T;
         }
 
         const requestConfig: AxiosRequestConfig = {
@@ -52,9 +52,9 @@ export class PublicESIService {
         };
 
         // Set the etag header if a cached response exists.
-        if (this.cacheController && this.cacheController.responseCache[url] && this.cacheController.responseCache[url].etag) {
+        if (this.cacheController && this.cacheController.responseCache[url] && this.cacheController.responseCache[url]!.etag) {
             requestConfig.headers = {
-                'If-None-Match': `${this.cacheController.responseCache[url].etag}`,
+                'If-None-Match': `${this.cacheController.responseCache[url]!.etag}`,
             };
         }
 
@@ -70,7 +70,7 @@ export class PublicESIService {
 
             if (this.cacheController) {
                 this.cacheController.saveToCache(response);
-                return this.cacheController.responseCache[url].data as T;
+                return this.cacheController.responseCache[url]!.data as T;
             }
 
             return response.data as T;

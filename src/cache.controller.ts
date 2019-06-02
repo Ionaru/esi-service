@@ -4,7 +4,7 @@ import { existsSync, readFileSync, writeFileSync } from 'fs';
 import * as httpStatus from 'http-status-codes';
 
 interface IResponseCache {
-    [index: string]: ICacheObject;
+    [index: string]: ICacheObject | undefined;
 }
 
 interface ICacheObject {
@@ -71,16 +71,16 @@ export class CacheController {
                 };
 
                 if (response.headers.etag) {
-                    this.responseCache[url].etag = response.headers.etag;
+                    this.responseCache[url]!.etag = response.headers.etag;
                 }
 
-                this.responseCache[url].expiry =
+                this.responseCache[url]!.expiry =
                     response.headers.expires ? new Date(response.headers.expires).getTime() : (Date.now() + 300000);
             }
 
         } else if (response.status === httpStatus.NOT_MODIFIED) {
 
-            this.responseCache[url].expiry =
+            this.responseCache[url]!.expiry =
                 response.headers.expires ? new Date(response.headers.expires).getTime() : (Date.now() + 300000);
         }
     }

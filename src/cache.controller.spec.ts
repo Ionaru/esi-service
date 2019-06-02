@@ -173,9 +173,10 @@ describe('CacheController tests', () => {
 
         expect(Object.keys(cache.responseCache).length).toBe(1);
         expect(Object.keys(cache.responseCache)).toContain('https://some.url/');
-        expect(cache.responseCache['https://some.url/'].data).toEqual('some data');
-        expect(cache.responseCache['https://some.url/'].etag).toEqual('12645');
-        expect(cache.responseCache['https://some.url/'].expiry).toBeTruthy();
+        expect(cache.responseCache['https://some.url/']).toBeTruthy();
+        expect(cache.responseCache['https://some.url/']!.data).toEqual('some data');
+        expect(cache.responseCache['https://some.url/']!.etag).toEqual('12645');
+        expect(cache.responseCache['https://some.url/']!.expiry).toBeTruthy();
     });
 
     test('saveToCache with etag and expiry', () => {
@@ -277,7 +278,16 @@ describe('CacheController tests', () => {
 
         expect(Object.keys(cache.responseCache).length).toBe(1);
         expect(Object.keys(cache.responseCache)).toContain('https://some.url/');
-        expect(cache.responseCache['https://some.url/'].data).toEqual('some data');
-        expect(cache.responseCache['https://some.url/'].expiry).toBeTruthy();
+        expect(cache.responseCache['https://some.url/']).toBeTruthy();
+        expect(cache.responseCache['https://some.url/']!.data).toEqual('some data');
+        expect(cache.responseCache['https://some.url/']!.expiry).toBeTruthy();
+    });
+
+    test('Read non-existing cache', () => {
+        const cache = new CacheController();
+        expect(cache.responseCache).toBeTruthy();
+
+        expect(Object.keys(cache.responseCache).length).toBe(0);
+        expect(cache.responseCache['https://some.url/']).toBeUndefined();
     });
 });
