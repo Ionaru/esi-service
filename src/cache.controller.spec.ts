@@ -106,6 +106,29 @@ describe('CacheController tests', () => {
         expect(Object.values(cache.responseCache)).toContainEqual(simpleCacheFileContent['https://some.url/']);
     });
 
+    test('dumpCache no savePath', () => {
+        setCacheFileExists(true);
+        setReadFileSyncOutput(JSON.stringify(simpleCacheFileContent));
+
+        const cache = new CacheController();
+        expect(cache.responseCache).toBeTruthy();
+        expect(debugSpy).toHaveBeenCalledTimes(0);
+
+        cache.responseCache['https://some.url/'] = {
+            data: 1,
+        };
+        expect(Object.keys(cache.responseCache).length).toBe(1);
+        expect(Object.keys(cache.responseCache)).toContain('https://some.url/');
+        expect(Object.values(cache.responseCache)).toContainEqual(simpleCacheFileContent['https://some.url/']);
+
+        setWriteFileSyncOutput();
+
+        const writeSpy = jest.spyOn(fs, 'writeFileSync');
+
+        cache.dumpCache();
+        expect(writeSpy).toHaveBeenCalledTimes(0);
+    });
+
     test('dumpCache', () => {
         setCacheFileExists(true);
         setReadFileSyncOutput(JSON.stringify(simpleCacheFileContent));
