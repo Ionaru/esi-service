@@ -4,7 +4,10 @@ All notable changes to the esi-service project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-<!--## [Unreleased]-->
+## [Unreleased]
+### Added
+- Debug logging when cache is used to retrieve data.
+
 ## [3.1.0]: 2019-06-02
 ### Changed
 - Changed typings of fetchESIData function, it will never return undefined. 
