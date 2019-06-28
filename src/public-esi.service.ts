@@ -43,6 +43,7 @@ export class PublicESIService {
 
         // Return cached data if it exists and is still valid.
         if (this.cacheController && !CacheController.isExpired(this.cacheController.responseCache[url])) {
+            PublicESIService.debug(`${url} => (From cache)`);
             return this.cacheController.responseCache[url]!.data as T;
         }
 
