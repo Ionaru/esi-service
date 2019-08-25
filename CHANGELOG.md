@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Possibility to provide default cache expiry times for URLs or domains. 
+- Possibility to provide default cache expiry times for URLs or domains.
+- Code documentation. 
 
 ## [3.1.1] - 2019-06-28
 ### Added

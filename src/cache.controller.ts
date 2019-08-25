@@ -19,6 +19,11 @@ interface ICacheObject {
 
 export class CacheController {
 
+    /**
+     * Checks if data from the cache is expired or not.
+     * @param {ICacheObject} cache - The cached data to check.
+     * @returns {boolean} - true if the cache is expired, otherwise false
+     */
     public static isExpired = (cache?: ICacheObject) => (cache && cache.expiry) ? cache.expiry < Date.now() : true;
 
     private static readonly debug = Debug('esi-service:CacheController');
@@ -28,6 +33,12 @@ export class CacheController {
     private readonly savePath?: string;
     private readonly defaultExpireTimes: IDefaultExpireTimes = {};
 
+    /**
+     * Creates a CacheController instance.
+     * @param {string} savePath - Path where the cache will be saved when dumpCache() is called.
+     * @param {IDefaultExpireTimes} defaultExpireTimes - An object holding an URL or domain as key and the default expire time as value.
+     * The default expire time will only be used when there is no `expires` header present in the response.
+     */
     constructor(savePath?: string, defaultExpireTimes?: IDefaultExpireTimes) {
         this.savePath = savePath;
 
@@ -40,6 +51,9 @@ export class CacheController {
         }
     }
 
+    /**
+     * Write the cache to a file.
+     */
     public dumpCache() {
         if (this.savePath) {
             const cacheString = JSON.stringify(this.responseCache);
@@ -47,6 +61,11 @@ export class CacheController {
         }
     }
 
+    /**
+     * Read and import the cache from a file.
+     * This function will not error and instead leave the cache empty if any problem was found during reading.
+     * @returns {IResponseCache}
+     */
     public readCache(): IResponseCache {
         if (this.savePath && existsSync(this.savePath)) {
             const cacheString = readFileSync(this.savePath).toString();
@@ -65,6 +84,10 @@ export class CacheController {
         return {};
     }
 
+    /**
+     * Save an AxiosResponse to the cache.
+     * @param {AxiosResponse} response - the response to save.
+     */
     public saveToCache(response: AxiosResponse) {
         const url = response.config.url;
 
