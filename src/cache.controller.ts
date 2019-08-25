@@ -3,15 +3,15 @@ import Debug from 'debug';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import * as httpStatus from 'http-status-codes';
 
-interface IResponseCache {
+export interface IResponseCache {
     [index: string]: ICacheObject | undefined;
 }
 
-interface IDefaultExpireTimes {
+export interface IDefaultExpireTimes {
     [index: string]: number | undefined;
 }
 
-interface ICacheObject {
+export interface ICacheObject {
     expiry?: number;
     etag?: string;
     data: any;

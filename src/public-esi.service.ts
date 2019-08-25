@@ -4,7 +4,7 @@ import * as httpStatus from 'http-status-codes';
 
 import { CacheController } from './';
 
-interface IConstructorParameters {
+export interface IConstructorParameters {
     axiosInstance?: AxiosInstance;
     cacheController?: CacheController;
     onRouteWarning?: (route: string, text?: string) => void;
