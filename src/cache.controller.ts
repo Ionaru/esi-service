@@ -101,30 +101,36 @@ export class CacheController {
                 data: response.data,
             };
 
-            if (response.headers.expires) {
-                this.responseCache[url]!.expiry = new Date(response.headers.expires).getTime();
-            } else {
-
-                // Use the default expiry time if it exists for the URL.
-                const defaultExpireTime = Object.keys(this.defaultExpireTimes).find((key) => url.includes(key));
-                if (defaultExpireTime) {
-                    const expires = Date.now() + this.defaultExpireTimes[defaultExpireTime]!;
-                    this.responseCache[url]!.expiry = response.headers.expires = expires;
-                }
-            }
-
-            if (response.headers.etag) {
-                this.responseCache[url]!.etag = response.headers.etag;
-            }
-
-            // Save response to cache but set to immediately expire.
-            if (!response.headers.expires && !response.headers.etag) {
-                this.responseCache[url]!.expiry = Date.now();
-            }
+            this.setCacheExpiry(url, response);
+            this.setCacheETag(url, response);
 
         // Since response is NOT MODIFIED, the response should already be in the cache, just update the expiry if needed.
-        } else if (response.status === httpStatus.NOT_MODIFIED && response.headers.expires) {
+        } else if (response.status === httpStatus.NOT_MODIFIED) {
+            this.setCacheExpiry(url, response);
+        }
+    }
+
+    private setCacheExpiry(url: string, response: AxiosResponse) {
+        if (response.headers.expires) {
             this.responseCache[url]!.expiry = new Date(response.headers.expires).getTime();
+        } else {
+
+            // Use the default expiry time if it exists for the URL.
+            const defaultExpireTime = Object.keys(this.defaultExpireTimes).find((key) => url.includes(key));
+            if (defaultExpireTime) {
+                const expires = Date.now() + this.defaultExpireTimes[defaultExpireTime]!;
+                this.responseCache[url]!.expiry = response.headers.expires = expires;
+            } else {
+                delete this.responseCache[url]!.expiry;
+            }
+        }
+    }
+
+    private setCacheETag(url: string, response: AxiosResponse) {
+        if (response.headers.etag) {
+            this.responseCache[url]!.etag = response.headers.etag;
+        } else {
+            delete this.responseCache[url]!.etag;
         }
     }
 }

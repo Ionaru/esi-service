@@ -306,7 +306,7 @@ describe('CacheController tests', () => {
         expect(Object.keys(cache.responseCache)).toContain('https://some.url/');
         expect(cache.responseCache['https://some.url/']).toBeTruthy();
         expect(cache.responseCache['https://some.url/']!.data).toEqual('some data');
-        expect(cache.responseCache['https://some.url/']!.expiry).toBeTruthy();
+        expect(cache.responseCache['https://some.url/']!.expiry).toBeUndefined();
     });
 
     test('Read non-existing cache', () => {
