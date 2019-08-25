@@ -1,10 +1,12 @@
 /* tslint:disable:no-duplicate-string no-identical-functions no-big-function */
 
 import * as fs from 'fs';
+import * as timekeeper from 'timekeeper';
 
 import { CacheController } from './';
 
 jest.mock('fs');
+timekeeper.freeze(new Date());
 
 function setReadFileSyncOutput(output: string) {
     require('fs').readFileSync = () => {
