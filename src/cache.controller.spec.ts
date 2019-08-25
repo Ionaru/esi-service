@@ -313,4 +313,25 @@ describe('CacheController tests', () => {
         expect(Object.keys(cache.responseCache).length).toBe(0);
         expect(cache.responseCache['https://some.url/']).toBeUndefined();
     });
+
+    test('Default expiry', () => {
+        const cache = new CacheController(undefined, {
+            'https://some.url/': 5000,
+        });
+        expect(cache.responseCache).toBeTruthy();
+
+        const expires = Date.now() + 5000;
+
+        cache.saveToCache({
+            config: {url: 'https://some.url/my-data'},
+            data: 'some data',
+            headers: {},
+            status: 200,
+            statusText: 'OK',
+        });
+
+        expect(Object.keys(cache.responseCache).length).toBe(1);
+        expect(Object.keys(cache.responseCache)).toContain('https://some.url/my-data');
+        expect(Object.values(cache.responseCache)).toContainEqual({data: 'some data', expiry: expires});
+    });
 });

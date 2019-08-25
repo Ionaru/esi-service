@@ -7,6 +7,10 @@ interface IResponseCache {
     [index: string]: ICacheObject | undefined;
 }
 
+interface IDefaultExpireTimes {
+    [index: string]: number | undefined;
+}
+
 interface ICacheObject {
     expiry?: number;
     etag?: string;
@@ -22,12 +26,17 @@ export class CacheController {
     public readonly responseCache: IResponseCache = {};
 
     private readonly savePath?: string;
+    private readonly defaultExpireTimes: IDefaultExpireTimes = {};
 
-    constructor(savePath?: string) {
+    constructor(savePath?: string, defaultExpireTimes?: IDefaultExpireTimes) {
         this.savePath = savePath;
 
         if (this.savePath) {
             this.responseCache = this.readCache();
+        }
+
+        if (defaultExpireTimes) {
+            this.defaultExpireTimes = defaultExpireTimes;
         }
     }
 
@@ -71,6 +80,14 @@ export class CacheController {
 
             if (response.headers.expires) {
                 this.responseCache[url]!.expiry = new Date(response.headers.expires).getTime();
+            } else {
+
+                // Use the default expiry time if it exists for the URL.
+                const defaultExpireTime = Object.keys(this.defaultExpireTimes).find((key) => url.includes(key));
+                if (defaultExpireTime) {
+                    const expires = Date.now() + this.defaultExpireTimes[defaultExpireTime]!;
+                    this.responseCache[url]!.expiry = response.headers.expires = expires;
+                }
             }
 
             if (response.headers.etag) {
