@@ -1,6 +1,7 @@
 /* tslint:disable:no-duplicate-string no-identical-functions no-big-function */
 
 import * as fs from 'fs';
+// tslint:disable-next-line:no-implicit-dependencies
 import * as timekeeper from 'timekeeper';
 
 import { CacheController } from './';
