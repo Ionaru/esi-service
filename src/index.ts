@@ -1,2 +1,2 @@
-export { PublicESIService } from './public-esi.service';
-export { CacheController } from './cache.controller';
+export * from './public-esi.service';
+export * from './cache.controller';
