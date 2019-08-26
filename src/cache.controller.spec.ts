@@ -206,6 +206,22 @@ describe('CacheController tests', () => {
         expect(cache.responseCache['https://some.url/']!.expiry).toBeUndefined();
     });
 
+    test('saveToCache error response', () => {
+        const cache = new CacheController();
+        expect(cache.responseCache).toBeTruthy();
+
+        cache.saveToCache({
+            config: {url: 'https://some.url/'},
+            data: 'some data',
+            headers: {etag: '12645'},
+            status: httpStatus.BAD_GATEWAY,
+            statusText: 'BAD_GATEWAY',
+        });
+
+        expect(Object.keys(cache.responseCache).length).toBe(0);
+        expect(cache.responseCache['https://some.url/']).toBeUndefined();
+    });
+
     test('saveToCache with etag and expiry', () => {
         const cache = new CacheController();
         expect(cache.responseCache).toBeTruthy();
