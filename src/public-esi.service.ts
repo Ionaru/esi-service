@@ -27,6 +27,16 @@ export class PublicESIService {
 
     private readonly deprecationsLogged: string[] = [];
 
+    /**
+     * Create a new PublicESIService instance.
+     * Parameters must be given in an object.
+     * @param {AxiosInstance | undefined} axiosInstance - A optional custom AxiosInstance for the service to use. If not given the service
+     * will create its own instance with default settings.
+     * @param {CacheController | undefined} cacheController - A CacheController for caching requests, if missing there will be a warning
+     * and requests will not be cached.
+     * @param {((route: string, text?: string) => void) | undefined} onRouteWarning - A function to call when a route returns a `warning`
+     * header, useful for custom logging.
+     */
     constructor({axiosInstance, cacheController, onRouteWarning}: IConstructorParameters = {}) {
 
         this.onRouteWarning = onRouteWarning;
@@ -80,6 +90,13 @@ export class PublicESIService {
         return response.data;
     }
 
+    /**
+     * Log a warning an ESI route might have given.
+     * Warning will only be logged once for any route, multiple calls with the same route have no effect.
+     * This function will also call the onRouteWarning constructor parameter if it was given.
+     * @param {string} route - The route to log the warning for.
+     * @param {string} text - The warning to log.
+     */
     public logWarning(route: string, text: string) {
         if (!this.deprecationsLogged.includes(route)) {
 
