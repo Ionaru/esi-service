@@ -86,6 +86,8 @@ export class CacheController {
 
     /**
      * Save an AxiosResponse to the cache.
+     * The `ETag` and `expires` headers will be saved to check validity of the cache.
+     * If the HTTP code is not OK or NOT_MODIFIED, the response will not be saved.
      * @param {AxiosResponse} response - the response to save.
      */
     public saveToCache(response: AxiosResponse) {
