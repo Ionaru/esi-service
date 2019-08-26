@@ -39,6 +39,11 @@ export class PublicESIService {
         }
     }
 
+    /**
+     * Fetch data from the ESI or any service like it (OpenAPI).
+     * @param {string} url - The URL to fetch data from.
+     * @returns {Promise<T>} - The optionally typed response data.
+     */
     public async fetchESIData<T>(url: string) {
 
         // Return cached data if it exists and is still valid.
