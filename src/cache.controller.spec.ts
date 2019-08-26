@@ -1,6 +1,7 @@
 /* tslint:disable:no-duplicate-string no-identical-functions no-big-function */
 
 import * as fs from 'fs';
+import * as httpStatus from 'http-status-codes';
 // tslint:disable-next-line:no-implicit-dependencies
 import * as timekeeper from 'timekeeper';
 
@@ -176,7 +177,7 @@ describe('CacheController tests', () => {
             config: {url: 'https://some.url/'},
             data: 'some data',
             headers: {expires},
-            status: 200,
+            status: httpStatus.OK,
             statusText: 'OK',
         });
 
@@ -193,7 +194,7 @@ describe('CacheController tests', () => {
             config: {url: 'https://some.url/'},
             data: 'some data',
             headers: {etag: '12645'},
-            status: 200,
+            status: httpStatus.OK,
             statusText: 'OK',
         });
 
@@ -215,7 +216,7 @@ describe('CacheController tests', () => {
             config: {url: 'https://some.url/'},
             data: 'some data',
             headers: {etag: '12645', expires},
-            status: 200,
+            status: httpStatus.OK,
             statusText: 'OK',
         });
 
@@ -235,7 +236,7 @@ describe('CacheController tests', () => {
                 config: {},
                 data: 'some data',
                 headers: {expires},
-                status: 200,
+                status: httpStatus.OK,
                 statusText: 'OK',
             });
         }).toThrow('Unable to save to cache, no URL given');
@@ -253,7 +254,7 @@ describe('CacheController tests', () => {
             config: {url: 'https://some.url/'},
             data: 'some data',
             headers: {expires},
-            status: 200,
+            status: httpStatus.OK,
             statusText: 'OK',
         });
 
@@ -267,7 +268,7 @@ describe('CacheController tests', () => {
             config: {url: 'https://some.url/'},
             data: '',
             headers: {expires: updatedExpiry},
-            status: 304,
+            status: httpStatus.NOT_MODIFIED,
             statusText: 'Not Modified',
         });
 
@@ -286,7 +287,7 @@ describe('CacheController tests', () => {
             config: {url: 'https://some.url/'},
             data: 'some data',
             headers: {expires},
-            status: 200,
+            status: httpStatus.OK,
             statusText: 'OK',
         });
 
@@ -298,7 +299,7 @@ describe('CacheController tests', () => {
             config: {url: 'https://some.url/'},
             data: '',
             headers: {},
-            status: 304,
+            status: httpStatus.NOT_MODIFIED,
             statusText: 'Not Modified',
         });
 
@@ -329,7 +330,7 @@ describe('CacheController tests', () => {
             config: {url: 'https://some.url/my-data'},
             data: 'some data',
             headers: {},
-            status: 200,
+            status: httpStatus.OK,
             statusText: 'OK',
         });
 
