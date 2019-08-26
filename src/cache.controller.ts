@@ -4,11 +4,11 @@ import { existsSync, readFileSync, writeFileSync } from 'fs';
 import * as httpStatus from 'http-status-codes';
 
 export interface IResponseCache {
-    [index: string]: ICacheObject | undefined;
+    [key: string]: ICacheObject | undefined;
 }
 
 export interface IDefaultExpireTimes {
-    [index: string]: number | undefined;
+    [key: string]: number | undefined;
 }
 
 export interface ICacheObject {
@@ -28,6 +28,11 @@ export class CacheController {
 
     private static readonly debug = Debug('esi-service:CacheController');
 
+    /**
+     * The object where cached responses are saved, the response URL is used as the key.
+     * Cached responses are accessible by querying responseCache[url].
+     * @type {IResponseCache}
+     */
     public readonly responseCache: IResponseCache = {};
 
     private readonly savePath?: string;
