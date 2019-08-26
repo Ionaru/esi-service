@@ -110,6 +110,12 @@ export class CacheController {
         }
     }
 
+    /**
+     * Called from saveToCache, this function sets an expiry time if needed.
+     * If an expiry time was not detected in a response but the cached response does have one, it will be deleted.
+     * @param {string} url
+     * @param {AxiosResponse} response
+     */
     private setCacheExpiry(url: string, response: AxiosResponse) {
         if (response.headers.expires) {
             this.responseCache[url]!.expiry = new Date(response.headers.expires).getTime();
@@ -126,6 +132,12 @@ export class CacheController {
         }
     }
 
+    /**
+     * Called from saveToCache, this function sets an ETag value if needed.
+     * If an ETag was not detected in a response but the cached response does have one, it will be deleted.
+     * @param {string} url
+     * @param {AxiosResponse} response
+     */
     private setCacheETag(url: string, response: AxiosResponse) {
         if (response.headers.etag) {
             this.responseCache[url]!.etag = response.headers.etag;
