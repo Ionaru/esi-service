@@ -183,7 +183,9 @@ describe('CacheController tests', () => {
 
         expect(Object.keys(cache.responseCache).length).toBe(1);
         expect(Object.keys(cache.responseCache)).toContain('https://some.url/');
-        expect(Object.values(cache.responseCache)).toContainEqual({data: 'some data', expiry: expires});
+        expect(Object.values(cache.responseCache)).toContainEqual({
+            data: 'some data', expiry: expires, headers: {expires},
+        });
     });
 
     test('saveToCache with etag', () => {
@@ -238,7 +240,9 @@ describe('CacheController tests', () => {
 
         expect(Object.keys(cache.responseCache).length).toBe(1);
         expect(Object.keys(cache.responseCache)).toContain('https://some.url/');
-        expect(Object.values(cache.responseCache)).toContainEqual({data: 'some data', etag: '12645', expiry: expires});
+        expect(Object.values(cache.responseCache)).toContainEqual({
+            data: 'some data', etag: '12645', expiry: expires, headers: {etag: '12645', expires},
+        });
     });
 
     test('saveToCache no url', () => {
@@ -276,7 +280,9 @@ describe('CacheController tests', () => {
 
         expect(Object.keys(cache.responseCache).length).toBe(1);
         expect(Object.keys(cache.responseCache)).toContain('https://some.url/');
-        expect(Object.values(cache.responseCache)).toContainEqual({data: 'some data', expiry: expires});
+        expect(Object.values(cache.responseCache)).toContainEqual({
+            data: 'some data', expiry: expires, headers: {expires},
+        });
 
         const updatedExpiry = Date.now() + 120000;
 
@@ -290,7 +296,9 @@ describe('CacheController tests', () => {
 
         expect(Object.keys(cache.responseCache).length).toBe(1);
         expect(Object.keys(cache.responseCache)).toContain('https://some.url/');
-        expect(Object.values(cache.responseCache)).toContainEqual({data: 'some data', expiry: updatedExpiry});
+        expect(Object.values(cache.responseCache)).toContainEqual({
+            data: 'some data', expiry: updatedExpiry, headers: {expires},
+        });
     });
 
     test('saveToCache not modified without expiry', () => {
@@ -309,7 +317,9 @@ describe('CacheController tests', () => {
 
         expect(Object.keys(cache.responseCache).length).toBe(1);
         expect(Object.keys(cache.responseCache)).toContain('https://some.url/');
-        expect(Object.values(cache.responseCache)).toContainEqual({data: 'some data', expiry: expires});
+        expect(Object.values(cache.responseCache)).toContainEqual({
+            data: 'some data', expiry: expires, headers: {expires},
+        });
 
         cache.saveToCache({
             config: {url: 'https://some.url/'},
@@ -352,6 +362,8 @@ describe('CacheController tests', () => {
 
         expect(Object.keys(cache.responseCache).length).toBe(1);
         expect(Object.keys(cache.responseCache)).toContain('https://some.url/my-data');
-        expect(Object.values(cache.responseCache)).toContainEqual({data: 'some data', expiry: expires});
+        expect(Object.values(cache.responseCache)).toContainEqual({
+            data: 'some data', expiry: expires, headers: {expires},
+        });
     });
 });

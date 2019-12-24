@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import Debug from 'debug';
 import * as httpStatus from 'http-status-codes';
 
@@ -54,7 +54,7 @@ export class PublicESIService {
      * @param {string} url - The URL to fetch data from.
      * @returns {Promise<T>} - The optionally typed response data.
      */
-    public async fetchESIData<T>(url: string) {
+    public async fetchESIData<T>(url: string): Promise<T> {
 
         // Return cached data if it exists and is still valid.
         if (this.cacheController && !CacheController.isExpired(this.cacheController.responseCache[url])) {
@@ -74,13 +74,7 @@ export class PublicESIService {
             };
         }
 
-        const response = await this.axiosInstance.get<T>(url, requestConfig);
-
-        PublicESIService.debug(`${url} => ${response.status} ${response.statusText}`);
-
-        if (response.headers.warning) {
-            this.logWarning(url, response.headers.warning);
-        }
+        const response = await this.fetchESIDataRaw<T>(url, requestConfig);
 
         if (this.cacheController) {
             this.cacheController.saveToCache(response);
@@ -88,6 +82,26 @@ export class PublicESIService {
         }
 
         return response.data;
+    }
+
+    /**
+     * Fetch data from the ESI or any service like it (OpenAPI).
+     * NO CACHING
+     * @param {string} url - The URL to fetch data from.
+     * @param {AxiosRequestConfig | undefined} config - Optional custom request config.
+     * @returns {Promise<AxiosResponse<T>>} - The optionally typed response.
+     */
+    public async fetchESIDataRaw<T>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+
+        const response = await this.axiosInstance.get<T>(url, config);
+
+        PublicESIService.debug(`${url} => ${response.status} ${response.statusText}`);
+
+        if (response.headers.warning) {
+            this.logWarning(url, response.headers.warning);
+        }
+
+        return response;
     }
 
     /**

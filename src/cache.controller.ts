@@ -12,9 +12,10 @@ export interface IDefaultExpireTimes {
 }
 
 export interface ICacheObject {
-    expiry?: number;
-    etag?: string;
     data: any;
+    etag?: string;
+    expiry?: number;
+    headers?: any;
 }
 
 export class CacheController {
@@ -106,6 +107,7 @@ export class CacheController {
 
             this.responseCache[url] = {
                 data: response.data,
+                headers: response.headers,
             };
 
             this.setCacheExpiry(url, response);
