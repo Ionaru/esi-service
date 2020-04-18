@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### BREAKING CHANGES
+- Dropped Node.js 8 support.
+- Dropped Node.js 11 support.
+
 ### Added
 - Ability to do a raw request to the ESI with custom config options, this request will not use caching and return the AxiosResponse object.
 - Full headers to cached data, this will increase the cache size, but allows for custom interaction with headers.
