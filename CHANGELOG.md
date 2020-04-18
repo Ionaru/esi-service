@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ability to do a raw request to the ESI with custom config options, this request will not use caching and return the AxiosResponse object.
 - Full headers to cached data, this will increase the cache size, but allows for custom interaction with headers.
 
+### Changed
+- Allow any axios 0.19 version to be used.
+
 ## [3.2.2] - 2019-08-26
 ### Changed
 - `expiry` and `etag` values will be removed from cached requests when they are not in the response when the cache updates. 
