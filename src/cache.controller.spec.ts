@@ -39,17 +39,13 @@ function setCacheFileExists(exists: boolean) {
 describe('CacheController tests', () => {
 
     let warningSpy: jest.SpyInstance;
-    let debugSpy: jest.SpyInstance;
 
     beforeEach(() => {
         warningSpy = jest.spyOn(process, 'emitWarning');
-        // @ts-ignore
-        debugSpy = jest.spyOn(CacheController, 'debug');
     });
 
     afterEach(() => {
         warningSpy.mockClear();
-        debugSpy.mockClear();
     });
 
     const simpleCacheFileContent = {
@@ -92,7 +88,6 @@ describe('CacheController tests', () => {
 
         const cache = new CacheController('data/cache.json');
         expect(cache.responseCache).toBeTruthy();
-        expect(debugSpy).toHaveBeenCalledWith('1 cached items loaded into memory');
         expect(Object.keys(cache.responseCache).length).toBe(1);
         expect(Object.keys(cache.responseCache)).toContain('https://some.url/');
         expect(Object.values(cache.responseCache)).toContainEqual(simpleCacheFileContent['https://some.url/']);
@@ -104,7 +99,6 @@ describe('CacheController tests', () => {
 
         const cache = new CacheController('data/cache');
         expect(cache.responseCache).toBeTruthy();
-        expect(debugSpy).toHaveBeenCalledWith('1 cached items loaded into memory');
         expect(Object.keys(cache.responseCache).length).toBe(1);
         expect(Object.keys(cache.responseCache)).toContain('https://some.url/');
         expect(Object.values(cache.responseCache)).toContainEqual(simpleCacheFileContent['https://some.url/']);
@@ -116,7 +110,6 @@ describe('CacheController tests', () => {
 
         const cache = new CacheController();
         expect(cache.responseCache).toBeTruthy();
-        expect(debugSpy).toHaveBeenCalledTimes(0);
 
         cache.responseCache['https://some.url/'] = {
             data: 1,
@@ -139,7 +132,6 @@ describe('CacheController tests', () => {
 
         const cache = new CacheController('data/cache.json');
         expect(cache.responseCache).toBeTruthy();
-        expect(debugSpy).toHaveBeenCalledWith('1 cached items loaded into memory');
         expect(Object.keys(cache.responseCache).length).toBe(1);
         expect(Object.keys(cache.responseCache)).toContain('https://some.url/');
         expect(Object.values(cache.responseCache)).toContainEqual(simpleCacheFileContent['https://some.url/']);
@@ -158,7 +150,6 @@ describe('CacheController tests', () => {
 
         const cache = new CacheController('data/cache.json');
         expect(cache.responseCache).toBeTruthy();
-        expect(debugSpy).toHaveBeenCalledWith('1 cached items loaded into memory');
         expect(Object.keys(cache.responseCache).length).toBe(1);
         expect(Object.keys(cache.responseCache)).toContain('https://some.url/');
         expect(Object.values(cache.responseCache)).toContainEqual(simpleCacheFileContent['https://some.url/']);

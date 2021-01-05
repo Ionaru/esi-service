@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import Debug from 'debug';
+import Debug, { Debugger } from 'debug';
 import { StatusCodes } from 'http-status-codes';
 
 import { CacheController } from './';
@@ -8,11 +8,10 @@ export interface IConstructorParameters {
     axiosInstance?: AxiosInstance;
     cacheController?: CacheController;
     onRouteWarning?: (route: string, text?: string) => void;
+    debug?: Debugger;
 }
 
 export class PublicESIService {
-
-    private static readonly debug = Debug('esi-service:PublicESIService');
 
     private static readonly acceptedStatusCodes = [
         StatusCodes.OK,
@@ -27,6 +26,8 @@ export class PublicESIService {
 
     private readonly deprecationsLogged: string[] = [];
 
+    private readonly debug: Debugger;
+
     /**
      * Create a new PublicESIService instance.
      * Parameters must be given in an object.
@@ -36,8 +37,9 @@ export class PublicESIService {
      * and requests will not be cached.
      * @param {((route: string, text?: string) => void) | undefined} onRouteWarning - A function to call when a route returns a `warning`
      * header, useful for custom logging.
+     * @param {Debugger} debug - A Debugger instance to log debug output to.
      */
-    constructor({axiosInstance, cacheController, onRouteWarning}: IConstructorParameters = {}) {
+    constructor({axiosInstance, cacheController, onRouteWarning, debug}: IConstructorParameters = {}) {
 
         this.onRouteWarning = onRouteWarning;
 
@@ -47,6 +49,8 @@ export class PublicESIService {
         if (!this.cacheController) {
             process.emitWarning(`No CacheController instance given to ${this.constructor.name}, requests will not be cached!`);
         }
+
+        this.debug = (debug ? debug : Debug('esi-service')).extend('PublicESIService');
     }
 
     /**
@@ -58,7 +62,7 @@ export class PublicESIService {
 
         // Return cached data if it exists and is still valid.
         if (this.cacheController && !CacheController.isExpired(this.cacheController.responseCache[url])) {
-            PublicESIService.debug(`${url} => (From cache)`);
+            this.debug(`${url} => (From cache)`);
             return this.cacheController.responseCache[url]!.data as T;
         }
 
@@ -95,7 +99,7 @@ export class PublicESIService {
 
         const response = await this.axiosInstance.get<T>(url, config);
 
-        PublicESIService.debug(`${url} => ${response.status} ${response.statusText}`);
+        this.debug(`${url} => ${response.status} ${response.statusText}`);
 
         if (response.headers.warning) {
             this.logWarning(url, response.headers.warning);

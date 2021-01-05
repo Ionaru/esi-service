@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated the minimum version of peerDependency 'axios' to 0.21.1.
 - Added 'debug' and 'http-status-codes' to peerDependencies.
 
+### Added
+- A `debug` parameter to both `CacheController` and `PublicESIService` for debug logging.
+
 ## [4.0.0] - 2020-04-19
 ### BREAKING CHANGES
 - Dropped Node.js 8 support.

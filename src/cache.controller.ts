@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import Debug from 'debug';
+import Debug, { Debugger } from 'debug';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { StatusCodes } from 'http-status-codes';
 
@@ -27,8 +27,6 @@ export class CacheController {
      */
     public static isExpired = (cache?: ICacheObject) => (cache && cache.expiry) ? cache.expiry < Date.now() : true;
 
-    private static readonly debug = Debug('esi-service:CacheController');
-
     /**
      * The object where cached responses are saved, the response URL is used as the key.
      * Cached responses are accessible by querying responseCache[url].
@@ -38,15 +36,18 @@ export class CacheController {
 
     private readonly savePath?: string;
     private readonly defaultExpireTimes: IDefaultExpireTimes = {};
+    private readonly debug: Debugger;
 
     /**
      * Creates a CacheController instance.
      * @param {string} savePath - Path where the cache will be saved when dumpCache() is called.
      * @param {IDefaultExpireTimes} defaultExpireTimes - An object holding an URL or domain as key and the default expire time as value.
+     * @param {Debugger} debug - A Debugger instance to log debug output to.
      * The default expire time will only be used when there is no `expires` header present in the response.
      */
-    constructor(savePath?: string, defaultExpireTimes?: IDefaultExpireTimes) {
+    constructor(savePath?: string, defaultExpireTimes?: IDefaultExpireTimes, debug?: Debugger) {
         this.savePath = savePath;
+        this.debug = (debug ? debug : Debug('esi-service')).extend('CacheController');
 
         if (this.savePath) {
             this.responseCache = this.readCache();
@@ -83,7 +84,7 @@ export class CacheController {
             }
 
             if (cacheJson) {
-                CacheController.debug(`${Object.keys(cacheJson).length} cached items loaded into memory`);
+                this.debug(`${Object.keys(cacheJson).length} cached items loaded into memory`);
                 return cacheJson;
             }
         }
