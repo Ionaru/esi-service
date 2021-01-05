@@ -1,8 +1,7 @@
-/* tslint:disable:no-duplicate-string no-identical-functions no-big-function */
-
+/* eslint-disable jest/no-hooks,sonarjs/no-duplicate-string,@typescript-eslint/no-non-null-assertion */
 import * as fs from 'fs';
+
 import { StatusCodes } from 'http-status-codes';
-// tslint:disable-next-line:no-implicit-dependencies
 import * as timekeeper from 'timekeeper';
 
 import { CacheController } from './';
@@ -10,33 +9,36 @@ import { CacheController } from './';
 jest.mock('fs');
 timekeeper.freeze(new Date());
 
-function setReadFileSyncOutput(output: string) {
-    require('fs').readFileSync = () => {
-        return output;
-    };
-}
+const setReadFileSyncOutput = (output: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    require('fs').readFileSync = () => output;
+};
 
-function setWriteFileSyncOutput() {
+const setWriteFileSyncOutput = () => {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     require('fs').writeFileSync = () => { /* Nothing to do */ };
-}
+};
 
-function throwReadFileSyncOutput(throwable: any) {
+const throwReadFileSyncOutput = (throwable: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     require('fs').readFileSync = () => {
         throw throwable;
     };
-}
+};
 
-function throwWriteFileSyncOutput(throwable: any) {
+const throwWriteFileSyncOutput = (throwable: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     require('fs').writeFileSync = () => {
         throw throwable;
     };
-}
+};
 
-function setCacheFileExists(exists: boolean) {
+const setCacheFileExists = (exists: boolean) => {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     require('fs').existsSync = () => exists;
-}
+};
 
-describe('CacheController tests', () => {
+describe('cacheController tests', () => {
 
     let warningSpy: jest.SpyInstance;
 
@@ -54,26 +56,34 @@ describe('CacheController tests', () => {
         },
     };
 
-    test('new CacheController no parameters', () => {
+    it('new CacheController no parameters', () => {
+        expect.assertions(1);
+
         const cache = new CacheController();
         expect(cache.responseCache).toBeTruthy();
     });
 
-    test('new CacheController with path, no file', () => {
+    it('new CacheController with path, no file', () => {
+        expect.assertions(1);
+
         setCacheFileExists(false);
 
         const cache = new CacheController('data/cache.json');
         expect(cache.responseCache).toBeTruthy();
     });
 
-    test('new CacheController with path, unreadable file', () => {
+    it('new CacheController with path, unreadable file', () => {
+        expect.assertions(1);
+
         setCacheFileExists(true);
         throwReadFileSyncOutput(new Error('Unreadable'));
 
         expect(() => new CacheController('data/cache.json')).toThrow('Unreadable');
     });
 
-    test('new CacheController with path, malformed JSON', () => {
+    it('new CacheController with path, malformed JSON', () => {
+        expect.assertions(2);
+
         setCacheFileExists(true);
         setReadFileSyncOutput('This is in no way valid JSON!!');
 
@@ -82,29 +92,35 @@ describe('CacheController tests', () => {
         expect(warningSpy).toHaveBeenCalledWith('Unexpected token T in JSON at position 0');
     });
 
-    test('new CacheController with path, file exists', () => {
+    it('new CacheController with path, file exists', () => {
+        expect.assertions(4);
+
         setCacheFileExists(true);
         setReadFileSyncOutput(JSON.stringify(simpleCacheFileContent));
 
         const cache = new CacheController('data/cache.json');
         expect(cache.responseCache).toBeTruthy();
-        expect(Object.keys(cache.responseCache).length).toBe(1);
+        expect(Object.keys(cache.responseCache)).toHaveLength(1);
         expect(Object.keys(cache.responseCache)).toContain('https://some.url/');
         expect(Object.values(cache.responseCache)).toContainEqual(simpleCacheFileContent['https://some.url/']);
     });
 
-    test('new CacheController with path no extension', () => {
+    it('new CacheController with path no extension', () => {
+        expect.assertions(4);
+
         setCacheFileExists(true);
         setReadFileSyncOutput(JSON.stringify(simpleCacheFileContent));
 
         const cache = new CacheController('data/cache');
         expect(cache.responseCache).toBeTruthy();
-        expect(Object.keys(cache.responseCache).length).toBe(1);
+        expect(Object.keys(cache.responseCache)).toHaveLength(1);
         expect(Object.keys(cache.responseCache)).toContain('https://some.url/');
         expect(Object.values(cache.responseCache)).toContainEqual(simpleCacheFileContent['https://some.url/']);
     });
 
-    test('dumpCache no savePath', () => {
+    it('dumpCache no savePath', () => {
+        expect.assertions(5);
+
         setCacheFileExists(true);
         setReadFileSyncOutput(JSON.stringify(simpleCacheFileContent));
 
@@ -114,7 +130,7 @@ describe('CacheController tests', () => {
         cache.responseCache['https://some.url/'] = {
             data: 1,
         };
-        expect(Object.keys(cache.responseCache).length).toBe(1);
+        expect(Object.keys(cache.responseCache)).toHaveLength(1);
         expect(Object.keys(cache.responseCache)).toContain('https://some.url/');
         expect(Object.values(cache.responseCache)).toContainEqual(simpleCacheFileContent['https://some.url/']);
 
@@ -126,13 +142,15 @@ describe('CacheController tests', () => {
         expect(writeSpy).toHaveBeenCalledTimes(0);
     });
 
-    test('dumpCache', () => {
+    it('dumpCache', () => {
+        expect.assertions(5);
+
         setCacheFileExists(true);
         setReadFileSyncOutput(JSON.stringify(simpleCacheFileContent));
 
         const cache = new CacheController('data/cache.json');
         expect(cache.responseCache).toBeTruthy();
-        expect(Object.keys(cache.responseCache).length).toBe(1);
+        expect(Object.keys(cache.responseCache)).toHaveLength(1);
         expect(Object.keys(cache.responseCache)).toContain('https://some.url/');
         expect(Object.values(cache.responseCache)).toContainEqual(simpleCacheFileContent['https://some.url/']);
 
@@ -141,16 +159,18 @@ describe('CacheController tests', () => {
         const writeSpy = jest.spyOn(fs, 'writeFileSync');
 
         cache.dumpCache();
-        expect(writeSpy).toBeCalledWith('data/cache.json', JSON.stringify(simpleCacheFileContent));
+        expect(writeSpy).toHaveBeenCalledWith('data/cache.json', JSON.stringify(simpleCacheFileContent));
     });
 
-    test('dumpCache', () => {
+    it('dumpCache 2', () => {
+        expect.assertions(5);
+
         setCacheFileExists(true);
         setReadFileSyncOutput(JSON.stringify(simpleCacheFileContent));
 
         const cache = new CacheController('data/cache.json');
         expect(cache.responseCache).toBeTruthy();
-        expect(Object.keys(cache.responseCache).length).toBe(1);
+        expect(Object.keys(cache.responseCache)).toHaveLength(1);
         expect(Object.keys(cache.responseCache)).toContain('https://some.url/');
         expect(Object.values(cache.responseCache)).toContainEqual(simpleCacheFileContent['https://some.url/']);
 
@@ -158,7 +178,9 @@ describe('CacheController tests', () => {
         expect(() => cache.dumpCache()).toThrow('Unwritable!');
     });
 
-    test('saveToCache with expiry', () => {
+    it('saveToCache with expiry', () => {
+        expect.assertions(4);
+
         const cache = new CacheController();
         expect(cache.responseCache).toBeTruthy();
 
@@ -172,14 +194,16 @@ describe('CacheController tests', () => {
             statusText: 'OK',
         });
 
-        expect(Object.keys(cache.responseCache).length).toBe(1);
+        expect(Object.keys(cache.responseCache)).toHaveLength(1);
         expect(Object.keys(cache.responseCache)).toContain('https://some.url/');
         expect(Object.values(cache.responseCache)).toContainEqual({
             data: 'some data', expiry: expires, headers: {expires},
         });
     });
 
-    test('saveToCache with etag', () => {
+    it('saveToCache with etag', () => {
+        expect.assertions(7);
+
         const cache = new CacheController();
         expect(cache.responseCache).toBeTruthy();
 
@@ -191,15 +215,17 @@ describe('CacheController tests', () => {
             statusText: 'OK',
         });
 
-        expect(Object.keys(cache.responseCache).length).toBe(1);
+        expect(Object.keys(cache.responseCache)).toHaveLength(1);
         expect(Object.keys(cache.responseCache)).toContain('https://some.url/');
         expect(cache.responseCache['https://some.url/']).toBeTruthy();
-        expect(cache.responseCache['https://some.url/']!.data).toEqual('some data');
-        expect(cache.responseCache['https://some.url/']!.etag).toEqual('12645');
+        expect(cache.responseCache['https://some.url/']!.data).toStrictEqual('some data');
+        expect(cache.responseCache['https://some.url/']!.etag).toStrictEqual('12645');
         expect(cache.responseCache['https://some.url/']!.expiry).toBeUndefined();
     });
 
-    test('saveToCache error response', () => {
+    it('saveToCache error response', () => {
+        expect.assertions(3);
+
         const cache = new CacheController();
         expect(cache.responseCache).toBeTruthy();
 
@@ -211,11 +237,13 @@ describe('CacheController tests', () => {
             statusText: 'BAD_GATEWAY',
         });
 
-        expect(Object.keys(cache.responseCache).length).toBe(0);
+        expect(Object.keys(cache.responseCache)).toHaveLength(0);
         expect(cache.responseCache['https://some.url/']).toBeUndefined();
     });
 
-    test('saveToCache with etag and expiry', () => {
+    it('saveToCache with etag and expiry', () => {
+        expect.assertions(4);
+
         const cache = new CacheController();
         expect(cache.responseCache).toBeTruthy();
 
@@ -229,14 +257,16 @@ describe('CacheController tests', () => {
             statusText: 'OK',
         });
 
-        expect(Object.keys(cache.responseCache).length).toBe(1);
+        expect(Object.keys(cache.responseCache)).toHaveLength(1);
         expect(Object.keys(cache.responseCache)).toContain('https://some.url/');
         expect(Object.values(cache.responseCache)).toContainEqual({
             data: 'some data', etag: '12645', expiry: expires, headers: {etag: '12645', expires},
         });
     });
 
-    test('saveToCache no url', () => {
+    it('saveToCache no url', () => {
+        expect.assertions(3);
+
         const cache = new CacheController();
         expect(cache.responseCache).toBeTruthy();
 
@@ -252,10 +282,12 @@ describe('CacheController tests', () => {
             });
         }).toThrow('Unable to save to cache, no URL given');
 
-        expect(Object.keys(cache.responseCache).length).toBe(0);
+        expect(Object.keys(cache.responseCache)).toHaveLength(0);
     });
 
-    test('saveToCache not modified', () => {
+    it('saveToCache not modified', () => {
+        expect.assertions(7);
+
         const cache = new CacheController();
         expect(cache.responseCache).toBeTruthy();
 
@@ -269,7 +301,7 @@ describe('CacheController tests', () => {
             statusText: 'OK',
         });
 
-        expect(Object.keys(cache.responseCache).length).toBe(1);
+        expect(Object.keys(cache.responseCache)).toHaveLength(1);
         expect(Object.keys(cache.responseCache)).toContain('https://some.url/');
         expect(Object.values(cache.responseCache)).toContainEqual({
             data: 'some data', expiry: expires, headers: {expires},
@@ -285,14 +317,16 @@ describe('CacheController tests', () => {
             statusText: 'Not Modified',
         });
 
-        expect(Object.keys(cache.responseCache).length).toBe(1);
+        expect(Object.keys(cache.responseCache)).toHaveLength(1);
         expect(Object.keys(cache.responseCache)).toContain('https://some.url/');
         expect(Object.values(cache.responseCache)).toContainEqual({
             data: 'some data', expiry: updatedExpiry, headers: {expires},
         });
     });
 
-    test('saveToCache not modified without expiry', () => {
+    it('saveToCache not modified without expiry', () => {
+        expect.assertions(9);
+
         const cache = new CacheController();
         expect(cache.responseCache).toBeTruthy();
 
@@ -306,7 +340,7 @@ describe('CacheController tests', () => {
             statusText: 'OK',
         });
 
-        expect(Object.keys(cache.responseCache).length).toBe(1);
+        expect(Object.keys(cache.responseCache)).toHaveLength(1);
         expect(Object.keys(cache.responseCache)).toContain('https://some.url/');
         expect(Object.values(cache.responseCache)).toContainEqual({
             data: 'some data', expiry: expires, headers: {expires},
@@ -320,22 +354,26 @@ describe('CacheController tests', () => {
             statusText: 'Not Modified',
         });
 
-        expect(Object.keys(cache.responseCache).length).toBe(1);
+        expect(Object.keys(cache.responseCache)).toHaveLength(1);
         expect(Object.keys(cache.responseCache)).toContain('https://some.url/');
         expect(cache.responseCache['https://some.url/']).toBeTruthy();
-        expect(cache.responseCache['https://some.url/']!.data).toEqual('some data');
+        expect(cache.responseCache['https://some.url/']!.data).toStrictEqual('some data');
         expect(cache.responseCache['https://some.url/']!.expiry).toBeUndefined();
     });
 
-    test('Read non-existing cache', () => {
+    it('read non-existing cache', () => {
+        expect.assertions(3);
+
         const cache = new CacheController();
         expect(cache.responseCache).toBeTruthy();
 
-        expect(Object.keys(cache.responseCache).length).toBe(0);
+        expect(Object.keys(cache.responseCache)).toHaveLength(0);
         expect(cache.responseCache['https://some.url/']).toBeUndefined();
     });
 
-    test('Default expiry', () => {
+    it('default expiry', () => {
+        expect.assertions(4);
+
         const cache = new CacheController(undefined, {
             'https://some.url/': 5000,
         });
@@ -351,7 +389,7 @@ describe('CacheController tests', () => {
             statusText: 'OK',
         });
 
-        expect(Object.keys(cache.responseCache).length).toBe(1);
+        expect(Object.keys(cache.responseCache)).toHaveLength(1);
         expect(Object.keys(cache.responseCache)).toContain('https://some.url/my-data');
         expect(Object.values(cache.responseCache)).toContainEqual({
             data: 'some data', expiry: expires, headers: {expires},

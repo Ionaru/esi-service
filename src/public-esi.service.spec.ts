@@ -1,12 +1,12 @@
-/* tslint:disable:no-big-function */
-
+/* eslint-disable jest/no-mocks-import,jest/no-hooks,sonarjs/no-identical-functions,@typescript-eslint/no-non-null-assertion */
 import { AxiosResponse } from 'axios';
 import { StatusCodes } from 'http-status-codes';
 
-import { CacheController, PublicESIService } from './';
 import mockAxios from './__mocks__/axios';
 
-describe('PublicESIService tests', () => {
+import { CacheController, PublicESIService } from './';
+
+describe('publicESIService tests', () => {
 
     const url = 'https://esi.url/v0/universe/types/34';
 
@@ -29,13 +29,11 @@ describe('PublicESIService tests', () => {
         mockAxios.get.mockReset();
     });
 
-    function axiosCreateMock() {
-        return {
-            get: mockAxios.get,
-        };
-    }
+    const axiosCreateMock = () => ({
+        get: mockAxios.get,
+    });
 
-    function axiosGetMock(returnValue: AxiosResponse) {
+    const axiosGetMock = (returnValue: AxiosResponse) => {
         const validateStatusFunction = mockAxios.get.mock.calls[0][1].validateStatus;
         if (validateStatusFunction(returnValue.status)) {
             return returnValue;
@@ -43,9 +41,10 @@ describe('PublicESIService tests', () => {
 
         // This would normally be an Axios error.
         throw new Error('HTTP Error');
-    }
+    };
 
-    test('new PublicESIService no parameters', async () => {
+    it('new PublicESIService no parameters', async () => {
+        expect.assertions(4);
 
         mockAxios.create.mockImplementationOnce(axiosCreateMock);
 
@@ -63,10 +62,11 @@ describe('PublicESIService tests', () => {
         expect(mockAxios.get).toHaveBeenCalledTimes(1);
         expect(mockAxios.get).toHaveBeenCalledWith(url, expect.anything());
         expect(result).toBeTruthy();
-        expect(result!.name).toEqual('Tritanium');
+        expect(result!.name).toStrictEqual('Tritanium');
     });
 
-    test('new PublicESIService default axios', async () => {
+    it('new PublicESIService default axios', async () => {
+        expect.assertions(4);
 
         mockAxios.create.mockImplementationOnce(axiosCreateMock);
 
@@ -87,17 +87,19 @@ describe('PublicESIService tests', () => {
         expect(mockAxios.get).toHaveBeenCalledTimes(1);
         expect(mockAxios.get).toHaveBeenCalledWith(url, expect.anything());
         expect(result).toBeTruthy();
-        expect(result!.name).toEqual('Tritanium');
+        expect(result!.name).toStrictEqual('Tritanium');
     });
 
-    test('new PublicESIService default CacheController', async () => {
+    it('new PublicESIService default CacheController', async () => {
+        expect.assertions(1);
 
         new PublicESIService({axiosInstance: mockAxios as any});
 
         expect(warningSpy).toHaveBeenCalledWith('No CacheController instance given to PublicESIService, requests will not be cached!');
     });
 
-    test('fetchESIData', async () => {
+    it('fetchESIData', async () => {
+        expect.assertions(4);
 
         mockAxios.get.mockImplementationOnce(async () => axiosGetMock({
             config: {url},
@@ -113,10 +115,11 @@ describe('PublicESIService tests', () => {
         expect(mockAxios.get).toHaveBeenCalledTimes(1);
         expect(mockAxios.get).toHaveBeenCalledWith(url, expect.anything());
         expect(result).toBeTruthy();
-        expect(result!.name).toEqual('Tritanium');
+        expect(result!.name).toStrictEqual('Tritanium');
     });
 
-    test('fetchESIData expiry caching', async () => {
+    it('fetchESIData expiry caching', async () => {
+        expect.assertions(7);
 
         mockAxios.get.mockImplementationOnce(async () => axiosGetMock({
             config: {url},
@@ -139,17 +142,18 @@ describe('PublicESIService tests', () => {
         expect(mockAxios.get).toHaveBeenCalledTimes(1);
         expect(mockAxios.get).toHaveBeenCalledWith(url, expect.anything());
         expect(result).toBeTruthy();
-        expect(result!.name).toEqual('Tritanium');
+        expect(result!.name).toStrictEqual('Tritanium');
 
         // Result should have been cached.
 
         const result2 = await esi.fetchESIData<ITypeData>(url);
         expect(mockAxios.get).toHaveBeenCalledTimes(1);
         expect(result2).toBeTruthy();
-        expect(result2!.name).toEqual('Tritanium');
+        expect(result2!.name).toStrictEqual('Tritanium');
     });
 
-    test('fetchESIData etag caching', async () => {
+    it('fetchESIData etag caching', async () => {
+        expect.assertions(8);
 
         mockAxios.get.mockImplementationOnce(async () => axiosGetMock({
             config: {url},
@@ -173,7 +177,7 @@ describe('PublicESIService tests', () => {
         expect(mockAxios.get).toHaveBeenCalledTimes(1);
         expect(mockAxios.get).toHaveBeenCalledWith(url, expect.anything());
         expect(result).toBeTruthy();
-        expect(result!.name).toEqual('Tritanium');
+        expect(result!.name).toStrictEqual('Tritanium');
 
         // Result should have been cached.
 
@@ -192,10 +196,11 @@ describe('PublicESIService tests', () => {
         expect(mockAxios.get).toHaveBeenCalledTimes(2);
         expect(mockAxios.get).toHaveBeenCalledWith(url, expect.anything());
         expect(result2).toBeTruthy();
-        expect(result2!.name).toEqual('Tritanium');
+        expect(result2!.name).toStrictEqual('Tritanium');
     });
 
-    test('fetchESIData error', async () => {
+    it('fetchESIData error', async () => {
+        expect.assertions(1);
 
         mockAxios.get.mockImplementationOnce(async () => axiosGetMock({
             config: {url},
@@ -210,7 +215,8 @@ describe('PublicESIService tests', () => {
         await expect(esi.fetchESIData<ITypeData>(url)).rejects.toThrow('HTTP Error');
     });
 
-    test('fetchESIData warning', async () => {
+    it('fetchESIData warning', async () => {
+        expect.assertions(5);
 
         mockAxios.get.mockImplementationOnce(async () => axiosGetMock({
             config: {url},
@@ -228,12 +234,13 @@ describe('PublicESIService tests', () => {
         expect(mockAxios.get).toHaveBeenCalledTimes(1);
         expect(mockAxios.get).toHaveBeenCalledWith(url, expect.anything());
         expect(result).toBeTruthy();
-        expect(result!.name).toEqual('Tritanium');
+        expect(result!.name).toStrictEqual('Tritanium');
 
         expect(warningSpy).toHaveBeenCalledWith(`HTTP request warning. ${url}: Oh no! A warning!`);
     });
 
-    test('fetchESIData double warning same URL', async () => {
+    it('fetchESIData double warning same URL', async () => {
+        expect.assertions(3);
 
         const esi = new PublicESIService({axiosInstance: mockAxios as any, cacheController: new CacheController()});
 
@@ -267,7 +274,8 @@ describe('PublicESIService tests', () => {
         expect(warningSpy).toHaveBeenCalledTimes(1);
     });
 
-    test('fetchESIData double warning different URL', async () => {
+    it('fetchESIData double warning different URL', async () => {
+        expect.assertions(4);
 
         const esi = new PublicESIService({axiosInstance: mockAxios as any, cacheController: new CacheController()});
 
@@ -303,7 +311,8 @@ describe('PublicESIService tests', () => {
         expect(warningSpy).toHaveBeenCalledWith(`HTTP request warning. ${url2}: The second warning!`);
     });
 
-    test('fetchESIData custom onRouteWarning', async () => {
+    it('fetchESIData custom onRouteWarning', async () => {
+        expect.assertions(1);
 
         mockAxios.get.mockImplementationOnce(async () => axiosGetMock({
             config: {url},
@@ -325,7 +334,8 @@ describe('PublicESIService tests', () => {
         await expect(esi.fetchESIData<ITypeData>(url)).rejects.toThrow(`Route warning: ${url}, You have been warned again!`);
     });
 
-    test('validateStatus', async () => {
+    it('validateStatus', async () => {
+        expect.assertions(11);
 
         mockAxios.get.mockImplementationOnce(async () => axiosGetMock({
             config: {url},

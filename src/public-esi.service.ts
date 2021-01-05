@@ -18,8 +18,6 @@ export class PublicESIService {
         StatusCodes.NOT_MODIFIED,
     ];
 
-    private static validateStatus = (status: number) => PublicESIService.acceptedStatusCodes.includes(status);
-
     private readonly axiosInstance: AxiosInstance;
     private readonly cacheController?: CacheController;
     private readonly onRouteWarning?: (route: string, text: string) => void;
@@ -39,7 +37,7 @@ export class PublicESIService {
      * header, useful for custom logging.
      * @param {Debugger} debug - A Debugger instance to log debug output to.
      */
-    constructor({axiosInstance, cacheController, onRouteWarning, debug}: IConstructorParameters = {}) {
+    public constructor({axiosInstance, cacheController, onRouteWarning, debug}: IConstructorParameters = {}) {
 
         this.onRouteWarning = onRouteWarning;
 
@@ -53,6 +51,8 @@ export class PublicESIService {
         this.debug = (debug ? debug : Debug('esi-service')).extend('PublicESIService');
     }
 
+    private static validateStatus = (status: number) => PublicESIService.acceptedStatusCodes.includes(status);
+
     /**
      * Fetch data from the ESI or any service like it (OpenAPI).
      * @param {string} url - The URL to fetch data from.
@@ -63,6 +63,7 @@ export class PublicESIService {
         // Return cached data if it exists and is still valid.
         if (this.cacheController && !CacheController.isExpired(this.cacheController.responseCache[url])) {
             this.debug(`${url} => (From cache)`);
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             return this.cacheController.responseCache[url]!.data as T;
         }
 
@@ -72,8 +73,10 @@ export class PublicESIService {
         };
 
         // Set the etag header if a cached response exists.
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         if (this.cacheController && this.cacheController.responseCache[url] && this.cacheController.responseCache[url]!.etag) {
             requestConfig.headers = {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 'If-None-Match': this.cacheController.responseCache[url]!.etag,
             };
         }
@@ -82,6 +85,7 @@ export class PublicESIService {
 
         if (this.cacheController) {
             this.cacheController.saveToCache(response);
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             return this.cacheController.responseCache[url]!.data as T;
         }
 
@@ -115,7 +119,7 @@ export class PublicESIService {
      * @param {string} route - The route to log the warning for.
      * @param {string} text - The warning to log.
      */
-    public logWarning(route: string, text: string) {
+    public logWarning(route: string, text: string): void {
         if (!this.deprecationsLogged.includes(route)) {
 
             if (this.onRouteWarning) {

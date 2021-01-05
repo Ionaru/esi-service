@@ -1,6 +1,7 @@
+import { existsSync, readFileSync, writeFileSync } from 'fs';
+
 import { AxiosResponse } from 'axios';
 import Debug, { Debugger } from 'debug';
-import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { StatusCodes } from 'http-status-codes';
 
 export interface IResponseCache {
@@ -21,13 +22,6 @@ export interface ICacheObject {
 export class CacheController {
 
     /**
-     * Checks if data from the cache is expired or not.
-     * @param {ICacheObject} cache - The cached data to check.
-     * @returns {boolean} - true if the cache is expired, otherwise false
-     */
-    public static isExpired = (cache?: ICacheObject) => (cache && cache.expiry) ? cache.expiry < Date.now() : true;
-
-    /**
      * The object where cached responses are saved, the response URL is used as the key.
      * Cached responses are accessible by querying responseCache[url].
      * @type {IResponseCache}
@@ -45,7 +39,7 @@ export class CacheController {
      * @param {Debugger} debug - A Debugger instance to log debug output to.
      * The default expire time will only be used when there is no `expires` header present in the response.
      */
-    constructor(savePath?: string, defaultExpireTimes?: IDefaultExpireTimes, debug?: Debugger) {
+    public constructor(savePath?: string, defaultExpireTimes?: IDefaultExpireTimes, debug?: Debugger) {
         this.savePath = savePath;
         this.debug = (debug ? debug : Debug('esi-service')).extend('CacheController');
 
@@ -59,9 +53,16 @@ export class CacheController {
     }
 
     /**
+     * Checks if data from the cache is expired or not.
+     * @param {ICacheObject} cache - The cached data to check.
+     * @returns {boolean} - true if the cache is expired, otherwise false
+     */
+    public static isExpired = (cache?: ICacheObject): boolean => (cache && cache.expiry) ? cache.expiry < Date.now() : true;
+
+    /**
      * Write the cache to a file.
      */
-    public dumpCache() {
+    public dumpCache(): void {
         if (this.savePath) {
             const cacheString = JSON.stringify(this.responseCache);
             writeFileSync(this.savePath, cacheString);
@@ -97,7 +98,7 @@ export class CacheController {
      * If the HTTP code is not OK or NOT_MODIFIED, the response will not be saved.
      * @param {AxiosResponse} response - the response to save.
      */
-    public saveToCache(response: AxiosResponse) {
+    public saveToCache(response: AxiosResponse): void {
         const url = response.config.url;
 
         if (!url) {
@@ -126,17 +127,21 @@ export class CacheController {
      * @param {string} url
      * @param {AxiosResponse} response
      */
-    private setCacheExpiry(url: string, response: AxiosResponse) {
+    private setCacheExpiry(url: string, response: AxiosResponse): void {
         if (response.headers.expires) {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             this.responseCache[url]!.expiry = new Date(response.headers.expires).getTime();
         } else {
 
             // Use the default expiry time if it exists for the URL.
             const defaultExpireTime = Object.keys(this.defaultExpireTimes).find((key) => url.includes(key));
             if (defaultExpireTime) {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 const expires = Date.now() + this.defaultExpireTimes[defaultExpireTime]!;
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 this.responseCache[url]!.expiry = response.headers.expires = expires;
             } else {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 delete this.responseCache[url]!.expiry;
             }
         }
@@ -148,10 +153,12 @@ export class CacheController {
      * @param {string} url
      * @param {AxiosResponse} response
      */
-    private setCacheETag(url: string, response: AxiosResponse) {
+    private setCacheETag(url: string, response: AxiosResponse): void {
         if (response.headers.etag) {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             this.responseCache[url]!.etag = response.headers.etag;
         } else {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             delete this.responseCache[url]!.etag;
         }
     }
