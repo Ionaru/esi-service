@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios';
 import Debug from 'debug';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
-import * as httpStatus from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 
 export interface IResponseCache {
     [key: string]: ICacheObject | undefined;
@@ -103,7 +103,7 @@ export class CacheController {
             throw new Error('Unable to save to cache, no URL given');
         }
 
-        if (response.status === httpStatus.OK) {
+        if (response.status === StatusCodes.OK) {
 
             this.responseCache[url] = {
                 data: response.data,
@@ -114,7 +114,7 @@ export class CacheController {
             this.setCacheETag(url, response);
 
         // Since response is NOT MODIFIED, the response should already be in the cache, just update the expiry if needed.
-        } else if (response.status === httpStatus.NOT_MODIFIED) {
+        } else if (response.status === StatusCodes.NOT_MODIFIED) {
             this.setCacheExpiry(url, response);
         }
     }

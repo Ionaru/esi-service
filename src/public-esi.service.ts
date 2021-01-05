@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import Debug from 'debug';
-import * as httpStatus from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 
 import { CacheController } from './';
 
@@ -15,8 +15,8 @@ export class PublicESIService {
     private static readonly debug = Debug('esi-service:PublicESIService');
 
     private static readonly acceptedStatusCodes = [
-        httpStatus.OK,
-        httpStatus.NOT_MODIFIED,
+        StatusCodes.OK,
+        StatusCodes.NOT_MODIFIED,
     ];
 
     private static validateStatus = (status: number) => PublicESIService.acceptedStatusCodes.includes(status);
