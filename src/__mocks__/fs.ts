@@ -1,2 +1,2 @@
-const fs = jest.genMockFromModule<any>('fs');
+const fs = jest.createMockFromModule<any>('fs');
 module.exports = fs;
