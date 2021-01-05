@@ -1,7 +1,7 @@
 /* tslint:disable:no-big-function */
 
 import { AxiosResponse } from 'axios';
-import * as httpStatus from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 
 import { CacheController, PublicESIService } from './';
 import mockAxios from './__mocks__/axios';
@@ -53,7 +53,7 @@ describe('PublicESIService tests', () => {
             config: {url},
             data: expectedResult,
             headers: {},
-            status: httpStatus.OK,
+            status: StatusCodes.OK,
             statusText: 'OK',
         }));
 
@@ -76,7 +76,7 @@ describe('PublicESIService tests', () => {
             headers: {
                 expires: Date.now() + 60000,
             },
-            status: httpStatus.OK,
+            status: StatusCodes.OK,
             statusText: 'OK',
         }));
 
@@ -103,7 +103,7 @@ describe('PublicESIService tests', () => {
             config: {url},
             data: expectedResult,
             headers: {},
-            status: httpStatus.OK,
+            status: StatusCodes.OK,
             statusText: 'OK',
         }));
 
@@ -124,7 +124,7 @@ describe('PublicESIService tests', () => {
             headers: {
                 expires: Date.now() + 60000,
             },
-            status: httpStatus.OK,
+            status: StatusCodes.OK,
             statusText: 'OK',
         }));
 
@@ -158,7 +158,7 @@ describe('PublicESIService tests', () => {
                 etag: '12345',
                 expires: Date.now() - 60000,
             },
-            status: httpStatus.OK,
+            status: StatusCodes.OK,
             statusText: 'OK',
         }));
 
@@ -184,7 +184,7 @@ describe('PublicESIService tests', () => {
                 etag: '12345',
                 expires: Date.now() - 60000,
             },
-            status: httpStatus.NOT_MODIFIED,
+            status: StatusCodes.NOT_MODIFIED,
             statusText: 'NOT MODIFIED',
         }));
 
@@ -201,7 +201,7 @@ describe('PublicESIService tests', () => {
             config: {url},
             data: 'Something went wrong!',
             headers: {},
-            status: httpStatus.INTERNAL_SERVER_ERROR,
+            status: StatusCodes.INTERNAL_SERVER_ERROR,
             statusText: 'Internal Server Error',
         }));
 
@@ -218,7 +218,7 @@ describe('PublicESIService tests', () => {
             headers: {
                 warning: 'Oh no! A warning!',
             },
-            status: httpStatus.OK,
+            status: StatusCodes.OK,
             statusText: 'OK',
         }));
 
@@ -243,7 +243,7 @@ describe('PublicESIService tests', () => {
             headers: {
                 warning: 'You have been warned!',
             },
-            status: httpStatus.OK,
+            status: StatusCodes.OK,
             statusText: 'OK',
         }));
         await esi.fetchESIData<ITypeData>(url);
@@ -258,7 +258,7 @@ describe('PublicESIService tests', () => {
             headers: {
                 warning: 'You have been warned!',
             },
-            status: httpStatus.OK,
+            status: StatusCodes.OK,
             statusText: 'OK',
         }));
         await esi.fetchESIData<ITypeData>(url);
@@ -277,7 +277,7 @@ describe('PublicESIService tests', () => {
             headers: {
                 warning: 'The first warning!',
             },
-            status: httpStatus.OK,
+            status: StatusCodes.OK,
             statusText: 'OK',
         }));
         await esi.fetchESIData<ITypeData>(url);
@@ -293,7 +293,7 @@ describe('PublicESIService tests', () => {
             headers: {
                 warning: 'The second warning!',
             },
-            status: httpStatus.OK,
+            status: StatusCodes.OK,
             statusText: 'OK',
         }));
         await esi.fetchESIData<ITypeData>(url2);
@@ -311,7 +311,7 @@ describe('PublicESIService tests', () => {
             headers: {
                 warning: 'You have been warned again!',
             },
-            status: httpStatus.OK,
+            status: StatusCodes.OK,
             statusText: 'OK',
         }));
 
@@ -331,7 +331,7 @@ describe('PublicESIService tests', () => {
             config: {url},
             data: expectedResult,
             headers: {},
-            status: httpStatus.OK,
+            status: StatusCodes.OK,
             statusText: 'OK',
         }));
 
@@ -341,23 +341,23 @@ describe('PublicESIService tests', () => {
         const validateStatusFunction = mockAxios.get.mock.calls[0][1].validateStatus;
 
         [
-            httpStatus.OK,
-            httpStatus.NOT_MODIFIED,
+            StatusCodes.OK,
+            StatusCodes.NOT_MODIFIED,
         ].forEach((status) => {
             const valid = validateStatusFunction(status);
             expect(valid).toBe(true);
         });
 
         [
-            httpStatus.NO_CONTENT,
-            httpStatus.BAD_REQUEST,
-            httpStatus.UNAUTHORIZED,
-            httpStatus.FORBIDDEN,
-            httpStatus.NOT_FOUND,
-            httpStatus.INTERNAL_SERVER_ERROR,
-            httpStatus.BAD_GATEWAY,
-            httpStatus.SERVICE_UNAVAILABLE,
-            httpStatus.GATEWAY_TIMEOUT,
+            StatusCodes.NO_CONTENT,
+            StatusCodes.BAD_REQUEST,
+            StatusCodes.UNAUTHORIZED,
+            StatusCodes.FORBIDDEN,
+            StatusCodes.NOT_FOUND,
+            StatusCodes.INTERNAL_SERVER_ERROR,
+            StatusCodes.BAD_GATEWAY,
+            StatusCodes.SERVICE_UNAVAILABLE,
+            StatusCodes.GATEWAY_TIMEOUT,
         ].forEach((status) => {
             const valid = validateStatusFunction(status);
             expect(valid).toBe(false);
