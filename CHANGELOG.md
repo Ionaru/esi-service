@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - A `debug` parameter to both `CacheController` and `PublicESIService` for debug logging.
+- Node.js 14 support.
 
 ## [4.0.0] - 2020-04-19
 ### BREAKING CHANGES
