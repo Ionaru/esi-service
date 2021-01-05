@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### BREAKING CHANGES
-- Updated the minimum version of peerDependency axios to 0.21.1.
+- Updated the minimum version of peerDependency 'axios' to 0.21.1.
+- Added 'debug' and 'http-status-codes' to peerDependencies.
 
 ## [4.0.0] - 2020-04-19
 ### BREAKING CHANGES
