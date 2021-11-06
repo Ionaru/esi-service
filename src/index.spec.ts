@@ -6,7 +6,7 @@ describe('export tests', () => {
         expect.assertions(3);
 
         expect(Object.entries(index)).toHaveLength(2);
-        expect(typeof index.CacheController).toStrictEqual('function');
-        expect(typeof index.PublicESIService).toStrictEqual('function');
+        expect(typeof index.CacheController).toBe('function');
+        expect(typeof index.PublicESIService).toBe('function');
     });
 });

@@ -4,7 +4,13 @@ All notable changes to the esi-service project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-[comment]: <> (## [Unreleased])
+## [Unreleased]
+### BREAKING CHANGES
+- Dropped Node.js 10 support.
+
+### Added
+- Node.js 16 support.
+
 ## [5.0.0] - 2021-01-05
 ### BREAKING CHANGES
 - Updated the minimum version of peerDependency 'axios' to 0.21.1.
@@ -28,7 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.2.2] - 2019-08-26
 ### Changed
-- `expiry` and `etag` values will be removed from cached requests when they are not in the response when the cache updates. 
+- `expiry` and `etag` values will be removed from cached requests when they are not in the response when the cache updates.
 
 ### Fixed
 - Interface Exports.
@@ -40,7 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [3.2.0] - 2019-08-25
 ### Added
 - Possibility to provide default cache expiry times for URLs or domains.
-- Code documentation. 
+- Code documentation.
 
 ## [3.1.1] - 2019-06-28
 ### Added
@@ -48,7 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.1.0] - 2019-06-02
 ### Changed
-- Changed typings of fetchESIData function, it will never return undefined. 
+- Changed typings of fetchESIData function, it will never return undefined.
 
 ## [3.0.0] - 2019-06-02
 ### BREAKING CHANGES

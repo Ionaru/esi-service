@@ -62,7 +62,7 @@ describe('publicESIService tests', () => {
         expect(mockAxios.get).toHaveBeenCalledTimes(1);
         expect(mockAxios.get).toHaveBeenCalledWith(url, expect.anything());
         expect(result).toBeTruthy();
-        expect(result!.name).toStrictEqual('Tritanium');
+        expect(result!.name).toBe('Tritanium');
     });
 
     it('new PublicESIService default axios', async () => {
@@ -74,7 +74,7 @@ describe('publicESIService tests', () => {
             config: {url},
             data: expectedResult,
             headers: {
-                expires: Date.now() + 60000,
+                expires: (Date.now() + 60000).toString(),
             },
             status: StatusCodes.OK,
             statusText: 'OK',
@@ -87,7 +87,7 @@ describe('publicESIService tests', () => {
         expect(mockAxios.get).toHaveBeenCalledTimes(1);
         expect(mockAxios.get).toHaveBeenCalledWith(url, expect.anything());
         expect(result).toBeTruthy();
-        expect(result!.name).toStrictEqual('Tritanium');
+        expect(result!.name).toBe('Tritanium');
     });
 
     it('new PublicESIService default CacheController', async () => {
@@ -115,7 +115,7 @@ describe('publicESIService tests', () => {
         expect(mockAxios.get).toHaveBeenCalledTimes(1);
         expect(mockAxios.get).toHaveBeenCalledWith(url, expect.anything());
         expect(result).toBeTruthy();
-        expect(result!.name).toStrictEqual('Tritanium');
+        expect(result!.name).toBe('Tritanium');
     });
 
     it('fetchESIData expiry caching', async () => {
@@ -125,7 +125,7 @@ describe('publicESIService tests', () => {
             config: {url},
             data: expectedResult,
             headers: {
-                expires: Date.now() + 60000,
+                expires: (Date.now() + 60000).toString(),
             },
             status: StatusCodes.OK,
             statusText: 'OK',
@@ -142,14 +142,14 @@ describe('publicESIService tests', () => {
         expect(mockAxios.get).toHaveBeenCalledTimes(1);
         expect(mockAxios.get).toHaveBeenCalledWith(url, expect.anything());
         expect(result).toBeTruthy();
-        expect(result!.name).toStrictEqual('Tritanium');
+        expect(result!.name).toBe('Tritanium');
 
         // Result should have been cached.
 
         const result2 = await esi.fetchESIData<ITypeData>(url);
         expect(mockAxios.get).toHaveBeenCalledTimes(1);
         expect(result2).toBeTruthy();
-        expect(result2!.name).toStrictEqual('Tritanium');
+        expect(result2!.name).toBe('Tritanium');
     });
 
     it('fetchESIData etag caching', async () => {
@@ -160,7 +160,7 @@ describe('publicESIService tests', () => {
             data: expectedResult,
             headers: {
                 etag: '12345',
-                expires: Date.now() - 60000,
+                expires: (Date.now() - 60000).toString(),
             },
             status: StatusCodes.OK,
             statusText: 'OK',
@@ -177,7 +177,7 @@ describe('publicESIService tests', () => {
         expect(mockAxios.get).toHaveBeenCalledTimes(1);
         expect(mockAxios.get).toHaveBeenCalledWith(url, expect.anything());
         expect(result).toBeTruthy();
-        expect(result!.name).toStrictEqual('Tritanium');
+        expect(result!.name).toBe('Tritanium');
 
         // Result should have been cached.
 
@@ -186,7 +186,7 @@ describe('publicESIService tests', () => {
             data: '',
             headers: {
                 etag: '12345',
-                expires: Date.now() - 60000,
+                expires: (Date.now() - 60000).toString(),
             },
             status: StatusCodes.NOT_MODIFIED,
             statusText: 'NOT MODIFIED',
@@ -196,7 +196,7 @@ describe('publicESIService tests', () => {
         expect(mockAxios.get).toHaveBeenCalledTimes(2);
         expect(mockAxios.get).toHaveBeenCalledWith(url, expect.anything());
         expect(result2).toBeTruthy();
-        expect(result2!.name).toStrictEqual('Tritanium');
+        expect(result2!.name).toBe('Tritanium');
     });
 
     it('fetchESIData error', async () => {
@@ -234,7 +234,7 @@ describe('publicESIService tests', () => {
         expect(mockAxios.get).toHaveBeenCalledTimes(1);
         expect(mockAxios.get).toHaveBeenCalledWith(url, expect.anything());
         expect(result).toBeTruthy();
-        expect(result!.name).toStrictEqual('Tritanium');
+        expect(result!.name).toBe('Tritanium');
 
         expect(warningSpy).toHaveBeenCalledWith(`HTTP request warning. ${url}: Oh no! A warning!`);
     });

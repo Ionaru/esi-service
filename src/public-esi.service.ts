@@ -37,7 +37,7 @@ export class PublicESIService {
      * header, useful for custom logging.
      * @param {Debugger} debug - A Debugger instance to log debug output to.
      */
-    public constructor({axiosInstance, cacheController, onRouteWarning, debug}: IConstructorParameters = {}) {
+    public constructor({axiosInstance, cacheController, onRouteWarning, debug = Debug('esi-service')}: IConstructorParameters = {}) {
 
         this.onRouteWarning = onRouteWarning;
 
@@ -48,7 +48,7 @@ export class PublicESIService {
             process.emitWarning(`No CacheController instance given to ${this.constructor.name}, requests will not be cached!`);
         }
 
-        this.debug = (debug ? debug : Debug('esi-service')).extend('PublicESIService');
+        this.debug = debug.extend('PublicESIService');
     }
 
     private static validateStatus = (status: number) => PublicESIService.acceptedStatusCodes.includes(status);
@@ -77,7 +77,7 @@ export class PublicESIService {
         if (this.cacheController && this.cacheController.responseCache[url] && this.cacheController.responseCache[url]!.etag) {
             requestConfig.headers = {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                'If-None-Match': this.cacheController.responseCache[url]!.etag,
+                'If-None-Match': this.cacheController.responseCache[url]!.etag!,
             };
         }
 

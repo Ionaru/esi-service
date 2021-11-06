@@ -80,7 +80,7 @@ export class CacheController {
             let cacheJson;
             try {
                 cacheJson = JSON.parse(cacheString);
-            } catch (error) {
+            } catch (error: any) {
                 process.emitWarning(error.message);
             }
 
@@ -129,8 +129,15 @@ export class CacheController {
      */
     private setCacheExpiry(url: string, response: AxiosResponse): void {
         if (response.headers.expires) {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            this.responseCache[url]!.expiry = new Date(response.headers.expires).getTime();
+
+            if (!Number.isNaN(Number(response.headers.expires))) {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                this.responseCache[url]!.expiry = Number(response.headers.expires);
+            } else {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                this.responseCache[url]!.expiry = new Date(response.headers.expires).getTime();
+            }
+
         } else {
 
             // Use the default expiry time if it exists for the URL.
@@ -139,7 +146,8 @@ export class CacheController {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 const expires = Date.now() + this.defaultExpireTimes[defaultExpireTime]!;
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                this.responseCache[url]!.expiry = response.headers.expires = expires;
+                this.responseCache[url]!.expiry = expires;
+                response.headers.expires = expires.toString();
             } else {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 delete this.responseCache[url]!.expiry;
