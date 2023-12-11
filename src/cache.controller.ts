@@ -1,6 +1,7 @@
-import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 
 import { AxiosResponse } from 'axios';
+// eslint-disable-next-line @typescript-eslint/naming-convention
 import Debug, { Debugger } from 'debug';
 import { StatusCodes } from 'http-status-codes';
 
@@ -41,7 +42,7 @@ export class CacheController {
      */
     public constructor(savePath?: string, defaultExpireTimes?: IDefaultExpireTimes, debug?: Debugger) {
         this.savePath = savePath;
-        this.debug = (debug ? debug : Debug('esi-service')).extend('CacheController');
+        this.debug = (debug ?? Debug('esi-service')).extend('CacheController');
 
         if (this.savePath) {
             this.responseCache = this.readCache();
@@ -130,12 +131,12 @@ export class CacheController {
     private setCacheExpiry(url: string, response: AxiosResponse): void {
         if (response.headers.expires) {
 
-            if (!Number.isNaN(Number(response.headers.expires))) {
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                this.responseCache[url]!.expiry = Number(response.headers.expires);
-            } else {
+            if (Number.isNaN(Number(response.headers.expires))) {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 this.responseCache[url]!.expiry = new Date(response.headers.expires).getTime();
+            } else {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                this.responseCache[url]!.expiry = Number(response.headers.expires);
             }
 
         } else {

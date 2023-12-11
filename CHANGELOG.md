@@ -4,7 +4,17 @@ All notable changes to the esi-service project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-<!-- ## [Unreleased] -->
+## [Unreleased]
+### BREAKING CHANGES
+- Dropped Node.js 12 support.
+- Dropped Node.js 14 support.
+- Dropped Node.js 16 support.
+
+### Added
+- Support for v1 axios versions.
+- Node.js 18 support.
+- Node.js 20 support.
+
 ## [6.1.0] - 2022-02-26
 ### Added
 - Support for axios versions up to 0.26

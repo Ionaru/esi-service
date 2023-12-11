@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+// eslint-disable-next-line @typescript-eslint/naming-convention
 import Debug, { Debugger } from 'debug';
 import { StatusCodes } from 'http-status-codes';
 
@@ -41,7 +42,7 @@ export class PublicESIService {
 
         this.onRouteWarning = onRouteWarning;
 
-        this.axiosInstance = axiosInstance ? axiosInstance : axios.create();
+        this.axiosInstance = axiosInstance ?? axios.create();
 
         this.cacheController = cacheController;
         if (!this.cacheController) {

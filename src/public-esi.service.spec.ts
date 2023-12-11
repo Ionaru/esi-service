@@ -1,10 +1,24 @@
 /* eslint-disable jest/no-mocks-import,jest/no-hooks,sonarjs/no-identical-functions,@typescript-eslint/no-non-null-assertion */
-import { AxiosResponse } from 'axios';
+import { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { StatusCodes } from 'http-status-codes';
 
 import mockAxios from './__mocks__/axios';
 
 import { CacheController, PublicESIService } from './';
+
+const axiosCreateMock = () => ({
+    get: mockAxios.get,
+});
+
+const axiosGetMock = (returnValue: AxiosResponse) => {
+    const validateStatusFunction = mockAxios.get.mock.calls[0][1].validateStatus;
+    if (validateStatusFunction(returnValue.status)) {
+        return returnValue;
+    }
+
+    // This would normally be an Axios error.
+    throw new Error('HTTP Error');
+};
 
 describe('publicESIService tests', () => {
 
@@ -29,27 +43,13 @@ describe('publicESIService tests', () => {
         mockAxios.get.mockReset();
     });
 
-    const axiosCreateMock = () => ({
-        get: mockAxios.get,
-    });
-
-    const axiosGetMock = (returnValue: AxiosResponse) => {
-        const validateStatusFunction = mockAxios.get.mock.calls[0][1].validateStatus;
-        if (validateStatusFunction(returnValue.status)) {
-            return returnValue;
-        }
-
-        // This would normally be an Axios error.
-        throw new Error('HTTP Error');
-    };
-
     it('new PublicESIService no parameters', async () => {
         expect.assertions(4);
 
         mockAxios.create.mockImplementationOnce(axiosCreateMock);
 
         mockAxios.get.mockImplementationOnce(async () => axiosGetMock({
-            config: {url},
+            config: {url} as InternalAxiosRequestConfig,
             data: expectedResult,
             headers: {},
             status: StatusCodes.OK,
@@ -71,10 +71,10 @@ describe('publicESIService tests', () => {
         mockAxios.create.mockImplementationOnce(axiosCreateMock);
 
         mockAxios.get.mockImplementationOnce(async () => axiosGetMock({
-            config: {url},
+            config: {url} as InternalAxiosRequestConfig,
             data: expectedResult,
             headers: {
-                expires: (Date.now() + 60000).toString(),
+                expires: (Date.now() + 60_000).toString(),
             },
             status: StatusCodes.OK,
             statusText: 'OK',
@@ -102,7 +102,7 @@ describe('publicESIService tests', () => {
         expect.assertions(4);
 
         mockAxios.get.mockImplementationOnce(async () => axiosGetMock({
-            config: {url},
+            config: {url} as InternalAxiosRequestConfig,
             data: expectedResult,
             headers: {},
             status: StatusCodes.OK,
@@ -122,10 +122,10 @@ describe('publicESIService tests', () => {
         expect.assertions(7);
 
         mockAxios.get.mockImplementationOnce(async () => axiosGetMock({
-            config: {url},
+            config: {url} as InternalAxiosRequestConfig,
             data: expectedResult,
             headers: {
-                expires: (Date.now() + 60000).toString(),
+                expires: (Date.now() + 60_000).toString(),
             },
             status: StatusCodes.OK,
             statusText: 'OK',
@@ -156,11 +156,11 @@ describe('publicESIService tests', () => {
         expect.assertions(8);
 
         mockAxios.get.mockImplementationOnce(async () => axiosGetMock({
-            config: {url},
+            config: {url} as InternalAxiosRequestConfig,
             data: expectedResult,
             headers: {
                 etag: '12345',
-                expires: (Date.now() - 60000).toString(),
+                expires: (Date.now() - 60_000).toString(),
             },
             status: StatusCodes.OK,
             statusText: 'OK',
@@ -182,11 +182,11 @@ describe('publicESIService tests', () => {
         // Result should have been cached.
 
         mockAxios.get.mockImplementationOnce(async () => axiosGetMock({
-            config: {url},
+            config: {url} as InternalAxiosRequestConfig,
             data: '',
             headers: {
                 etag: '12345',
-                expires: (Date.now() - 60000).toString(),
+                expires: (Date.now() - 60_000).toString(),
             },
             status: StatusCodes.NOT_MODIFIED,
             statusText: 'NOT MODIFIED',
@@ -203,7 +203,7 @@ describe('publicESIService tests', () => {
         expect.assertions(1);
 
         mockAxios.get.mockImplementationOnce(async () => axiosGetMock({
-            config: {url},
+            config: {url} as InternalAxiosRequestConfig,
             data: 'Something went wrong!',
             headers: {},
             status: StatusCodes.INTERNAL_SERVER_ERROR,
@@ -219,7 +219,7 @@ describe('publicESIService tests', () => {
         expect.assertions(5);
 
         mockAxios.get.mockImplementationOnce(async () => axiosGetMock({
-            config: {url},
+            config: {url} as InternalAxiosRequestConfig,
             data: expectedResult,
             headers: {
                 warning: 'Oh no! A warning!',
@@ -245,7 +245,7 @@ describe('publicESIService tests', () => {
         const esi = new PublicESIService({axiosInstance: mockAxios as any, cacheController: new CacheController()});
 
         mockAxios.get.mockImplementationOnce(async () => axiosGetMock({
-            config: {url},
+            config: {url} as InternalAxiosRequestConfig,
             data: expectedResult,
             headers: {
                 warning: 'You have been warned!',
@@ -260,7 +260,7 @@ describe('publicESIService tests', () => {
 
         // Do second request to same url.
         mockAxios.get.mockImplementationOnce(async () => axiosGetMock({
-            config: {url},
+            config: {url} as InternalAxiosRequestConfig,
             data: expectedResult,
             headers: {
                 warning: 'You have been warned!',
@@ -280,7 +280,7 @@ describe('publicESIService tests', () => {
         const esi = new PublicESIService({axiosInstance: mockAxios as any, cacheController: new CacheController()});
 
         mockAxios.get.mockImplementationOnce(async () => axiosGetMock({
-            config: {url},
+            config: {url} as InternalAxiosRequestConfig,
             data: expectedResult,
             headers: {
                 warning: 'The first warning!',
@@ -296,7 +296,7 @@ describe('publicESIService tests', () => {
         // Do second request to a different url.
         const url2 = 'https://esi.url/v0/universe/types/35';
         mockAxios.get.mockImplementationOnce(async () => axiosGetMock({
-            config: {url: url2},
+            config: {url: url2} as InternalAxiosRequestConfig,
             data: expectedResult,
             headers: {
                 warning: 'The second warning!',
@@ -315,7 +315,7 @@ describe('publicESIService tests', () => {
         expect.assertions(1);
 
         mockAxios.get.mockImplementationOnce(async () => axiosGetMock({
-            config: {url},
+            config: {url} as InternalAxiosRequestConfig,
             data: expectedResult,
             headers: {
                 warning: 'You have been warned again!',
@@ -338,7 +338,7 @@ describe('publicESIService tests', () => {
         expect.assertions(11);
 
         mockAxios.get.mockImplementationOnce(async () => axiosGetMock({
-            config: {url},
+            config: {url} as InternalAxiosRequestConfig,
             data: expectedResult,
             headers: {},
             status: StatusCodes.OK,
@@ -350,15 +350,15 @@ describe('publicESIService tests', () => {
 
         const validateStatusFunction = mockAxios.get.mock.calls[0][1].validateStatus;
 
-        [
+        for (const status of [
             StatusCodes.OK,
             StatusCodes.NOT_MODIFIED,
-        ].forEach((status) => {
+        ]) {
             const valid = validateStatusFunction(status);
             expect(valid).toBe(true);
-        });
+        }
 
-        [
+        for (const status of [
             StatusCodes.NO_CONTENT,
             StatusCodes.BAD_REQUEST,
             StatusCodes.UNAUTHORIZED,
@@ -368,9 +368,9 @@ describe('publicESIService tests', () => {
             StatusCodes.BAD_GATEWAY,
             StatusCodes.SERVICE_UNAVAILABLE,
             StatusCodes.GATEWAY_TIMEOUT,
-        ].forEach((status) => {
+        ]) {
             const valid = validateStatusFunction(status);
             expect(valid).toBe(false);
-        });
+        }
     });
 });

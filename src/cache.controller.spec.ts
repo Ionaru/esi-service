@@ -1,6 +1,7 @@
 /* eslint-disable jest/no-hooks,sonarjs/no-duplicate-string,@typescript-eslint/no-non-null-assertion */
-import * as fs from 'fs';
+import * as fs from 'node:fs';
 
+import { InternalAxiosRequestConfig } from 'axios';
 import { StatusCodes } from 'http-status-codes';
 import * as timekeeper from 'timekeeper';
 
@@ -12,31 +13,31 @@ timekeeper.freeze(new Date());
 
 const setReadFileSyncOutput = (output: string) => {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    require('fs').readFileSync = () => output;
+    require('node:fs').readFileSync = () => output;
 };
 
 const setWriteFileSyncOutput = () => {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    require('fs').writeFileSync = () => { /* Nothing to do */ };
+    require('node:fs').writeFileSync = () => { /* Nothing to do */ };
 };
 
 const throwReadFileSyncOutput = (throwable: any) => {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    require('fs').readFileSync = () => {
+    require('node:fs').readFileSync = () => {
         throw throwable;
     };
 };
 
 const throwWriteFileSyncOutput = (throwable: any) => {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    require('fs').writeFileSync = () => {
+    require('node:fs').writeFileSync = () => {
         throw throwable;
     };
 };
 
 const setCacheFileExists = (exists: boolean) => {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    require('fs').existsSync = () => exists;
+    require('node:fs').existsSync = () => exists;
 };
 
 describe('cacheController tests', () => {
@@ -185,10 +186,10 @@ describe('cacheController tests', () => {
         const cache = new CacheController();
         expect(cache.responseCache).toBeTruthy();
 
-        const expires = Date.now() + 60000;
+        const expires = Date.now() + 60_000;
 
         cache.saveToCache({
-            config: {url: 'https://some.url/'},
+            config: {url: 'https://some.url/'} as InternalAxiosRequestConfig,
             data: 'some data',
             headers: {expires: expires.toString()},
             status: StatusCodes.OK,
@@ -209,7 +210,7 @@ describe('cacheController tests', () => {
         expect(cache.responseCache).toBeTruthy();
 
         cache.saveToCache({
-            config: {url: 'https://some.url/'},
+            config: {url: 'https://some.url/'} as InternalAxiosRequestConfig,
             data: 'some data',
             headers: {etag: '12645'},
             status: StatusCodes.OK,
@@ -231,7 +232,7 @@ describe('cacheController tests', () => {
         expect(cache.responseCache).toBeTruthy();
 
         cache.saveToCache({
-            config: {url: 'https://some.url/'},
+            config: {url: 'https://some.url/'} as InternalAxiosRequestConfig,
             data: 'some data',
             headers: {etag: '12645'},
             status: StatusCodes.BAD_GATEWAY,
@@ -248,10 +249,10 @@ describe('cacheController tests', () => {
         const cache = new CacheController();
         expect(cache.responseCache).toBeTruthy();
 
-        const expires = Date.now() + 60000;
+        const expires = Date.now() + 60_000;
 
         cache.saveToCache({
-            config: {url: 'https://some.url/'},
+            config: {url: 'https://some.url/'} as InternalAxiosRequestConfig,
             data: 'some data',
             headers: {etag: '12645', expires: expires.toString()},
             status: StatusCodes.OK,
@@ -271,11 +272,11 @@ describe('cacheController tests', () => {
         const cache = new CacheController();
         expect(cache.responseCache).toBeTruthy();
 
-        const expires = Date.now() + 60000;
+        const expires = Date.now() + 60_000;
 
         expect(() => {
             cache.saveToCache({
-                config: {},
+                config: {} as InternalAxiosRequestConfig,
                 data: 'some data',
                 headers: {expires: expires.toString()},
                 status: StatusCodes.OK,
@@ -292,10 +293,10 @@ describe('cacheController tests', () => {
         const cache = new CacheController();
         expect(cache.responseCache).toBeTruthy();
 
-        const expires = Date.now() + 60000;
+        const expires = Date.now() + 60_000;
 
         cache.saveToCache({
-            config: {url: 'https://some.url/'},
+            config: {url: 'https://some.url/'} as InternalAxiosRequestConfig,
             data: 'some data',
             headers: {expires: expires.toString()},
             status: StatusCodes.OK,
@@ -308,10 +309,10 @@ describe('cacheController tests', () => {
             data: 'some data', expiry: expires, headers: {expires: expires.toString()},
         });
 
-        const updatedExpiry = Date.now() + 120000;
+        const updatedExpiry = Date.now() + 120_000;
 
         cache.saveToCache({
-            config: {url: 'https://some.url/'},
+            config: {url: 'https://some.url/'} as InternalAxiosRequestConfig,
             data: '',
             headers: {expires: updatedExpiry.toString()},
             status: StatusCodes.NOT_MODIFIED,
@@ -331,10 +332,10 @@ describe('cacheController tests', () => {
         const cache = new CacheController();
         expect(cache.responseCache).toBeTruthy();
 
-        const expires = Date.now() + 60000;
+        const expires = Date.now() + 60_000;
 
         cache.saveToCache({
-            config: {url: 'https://some.url/'},
+            config: {url: 'https://some.url/'} as InternalAxiosRequestConfig,
             data: 'some data',
             headers: {expires: expires.toString()},
             status: StatusCodes.OK,
@@ -348,7 +349,7 @@ describe('cacheController tests', () => {
         });
 
         cache.saveToCache({
-            config: {url: 'https://some.url/'},
+            config: {url: 'https://some.url/'} as InternalAxiosRequestConfig,
             data: '',
             headers: {},
             status: StatusCodes.NOT_MODIFIED,
@@ -383,7 +384,7 @@ describe('cacheController tests', () => {
         const expires = Date.now() + 5000;
 
         cache.saveToCache({
-            config: {url: 'https://some.url/my-data'},
+            config: {url: 'https://some.url/my-data'} as InternalAxiosRequestConfig,
             data: 'some data',
             headers: {},
             status: StatusCodes.OK,
@@ -408,7 +409,7 @@ describe('cacheController tests', () => {
         const expires = 'Sat, 06 Nov 2021 11:05:00 GMT';
 
         cache.saveToCache({
-            config: {url: 'https://some.url/my-data'},
+            config: {url: 'https://some.url/my-data'} as InternalAxiosRequestConfig,
             data: 'some data',
             headers: {expires},
             status: StatusCodes.OK,
@@ -418,7 +419,7 @@ describe('cacheController tests', () => {
         expect(Object.keys(cache.responseCache)).toHaveLength(1);
         expect(Object.keys(cache.responseCache)).toContain('https://some.url/my-data');
         expect(Object.values(cache.responseCache)).toContainEqual({
-            data: 'some data', expiry: 1636196700000, headers: {expires},
+            data: 'some data', expiry: 1_636_196_700_000, headers: {expires},
         });
     });
 });
