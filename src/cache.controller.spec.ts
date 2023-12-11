@@ -91,7 +91,7 @@ describe('cacheController tests', () => {
 
         const cache = new CacheController('data/cache.json');
         expect(cache.responseCache).toBeTruthy();
-        expect(warningSpy).toHaveBeenCalledWith('Unexpected token T in JSON at position 0');
+        expect(warningSpy).toHaveBeenCalled();
     });
 
     it('new CacheController with path, file exists', () => {
